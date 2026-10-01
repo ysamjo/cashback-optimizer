@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cashback-Optimizer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="icons/logo-wide.png" alt="Cashback Optimizer">
+    <div class="header-actions">
+      <button id="openTab" class="icon-button hidden" type="button" title="Cashback-Optimizer in neuem Tab öffnen" aria-label="In neuem Tab öffnen">↗</button>
+      <button id="settingsButton" class="icon-button" type="button" title="Einstellungen" aria-label="Einstellungen">⚙</button>
+    </div>
+  </header>
+
+  <div id="searchBar" class="search-bar">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="shopSearch" placeholder="Shop suchen (z. B. Otto, Zalando, Eis.de)..." autocomplete="off" spellcheck="false">
+      <button id="clearSearch" class="clear-button hidden" type="button" aria-label="Suche leeren">×</button>
+    </div>
+    <div id="searchResults" class="search-results hidden" role="listbox"></div>
+  </div>
+
+  <main id="cashbackView">
+    <div id="loading" class="message"><span class="spinner"></span>Shop wird erkannt …</div>
+    <div id="unsupported" class="message hidden">
+      <strong>Für diese Seite wurde kein Shop erkannt.</strong>
+      <span>Suche oben nach einem beliebigen Shop oder öffne den Optimizer direkt:</span>
+      <div id="popularChips" class="popular-chips">
+        <button class="chip" type="button" data-shop="Otto">Otto</button>
+        <button class="chip" type="button" data-shop="MediaMarkt">MediaMarkt</button>
+        <button class="chip" type="button" data-shop="Zalando">Zalando</button>
+        <button class="chip" type="button" data-shop="IKEA">IKEA</button>
+        <button class="chip" type="button" data-shop="Lidl">Lidl</button>
+        <button class="chip" type="button" data-shop="Baur">Baur</button>
+      </div>
+      <button id="openMain" type="button">Cashback-Optimizer öffnen</button>
+    </div>
+    <div id="cashbackPanel" class="hidden">
+      <iframe id="cashbackFrame" title="Cashback-Möglichkeiten" referrerpolicy="no-referrer" src="about:blank"></iframe>
+    </div>
+  </main>
+
+  <main id="settingsView" class="hidden">
+    <div class="settings-title"><button id="backButton" class="icon-button" type="button" aria-label="Zurück">←</button><strong>Einstellungen</strong></div>
+    <label class="toggle"><span><strong>Erweiterung aktiv</strong><small>Cashback-Erkennung verwenden</small></span><input id="enabled" type="checkbox"></label>
+    <label class="field"><span>Anzeige</span><select id="displayMode"><option value="toolbar">Am Toolbar-Symbol</option><option value="page">Unten rechts auf der Webseite</option></select></label>
+    <label class="field"><span>Firmenkürzel</span><input id="cbPrefix" type="text" placeholder="z. B. samsung"><small>Für Corporate Benefits, benefits.me und meinebenefits.de</small></label>
+    <label class="toggle"><span><strong>Links anreichern</strong></span><input id="enableLinkEnricher" type="checkbox"></label>
+    <label class="toggle"><span><strong>Prefetch verwenden</strong></span><input id="popupPrefetch" type="checkbox"></label>
+    <label class="field"><span>Prefetch-Zeitpunkt</span><select id="prefetchMode"><option value="idle">Automatisch im Leerlauf</option><option value="intent">Bei Mausberührung/Antippen</option><option value="click">Erst beim Öffnen</option></select></label>
+    <label class="toggle"><span><strong>Desktop-Iframe vorladen</strong></span><input id="desktopIframePrefetch" type="checkbox"></label>
+    <label class="field"><span>Ausgeschlossene Seiten</span><textarea id="excludedDomains" rows="6" placeholder="Eine Domain oder URL pro Zeile"></textarea><small>Enthält die Standard-Ausschlüsse. Einträge können ergänzt oder entfernt werden.</small></label>
+    <div class="actions"><button id="reset" class="secondary" type="button">Standard</button><button id="save" type="button">Speichern</button></div>
+    <p id="status"></p>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+:root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #282200; background: #111; }
+* { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: rgba(181, 150, 76, 0.5) transparent; }
+html { background: #111; margin: 0; padding: 0; overflow: hidden; }
+body { width: 420px; min-height: 500px; margin: 0; padding: 0; overflow: hidden; background: #111; }
+.hidden { display: none !important; }
+
+/* Scrollbars im Popup */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(181, 150, 76, 0.45); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(181, 150, 76, 0.85); }
+::-webkit-scrollbar-corner { background: transparent; }
+
+header { height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 5px 10px 5px 12px; background: #111; border-bottom: 1px solid #b99a52; }
+header img { width: 174px; max-height: 35px; object-fit: contain; object-position: left center; }
+.header-actions { display: flex; align-items: center; gap: 7px; }
+.icon-button { width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 1px solid #d2b66f; border-radius: 8px; color: #d2b66f; background: #29251c; font-size: 16px; cursor: pointer; transition: transform .16s ease, background .16s ease; }
+.icon-button:hover { transform: scale(1.05); background: #383124; }
+
+/* Schnellsuche Bar */
+.search-bar { position: relative; padding: 6px 10px; background: #1a1813; border-bottom: 1px solid #4a3e20; }
+.search-input-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+.search-icon { position: absolute; left: 9px; font-size: 12px; pointer-events: none; opacity: 0.7; }
+#shopSearch { width: 100%; height: 32px; padding: 0 28px 0 28px; border: 1px solid #6b572a; border-radius: 8px; background: #242017; color: #fff7d6; font: inherit; font-size: 12.5px; transition: border-color .15s ease, background .15s ease; outline: none; -webkit-appearance: none; appearance: none; box-sizing: border-box; }
+#shopSearch:focus { border-color: #d2b66f; background: #2e291e; }
+#shopSearch::placeholder { color: #8e8061; }
+#shopSearch::-webkit-search-cancel-button,
+#shopSearch::-webkit-search-decoration,
+#shopSearch::-webkit-search-results-button,
+#shopSearch::-webkit-search-results-decoration { display: none; -webkit-appearance: none; }
+
+button.clear-button { position: absolute; right: 7px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; min-width: 18px; max-width: 18px; min-height: 18px; max-height: 18px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; border: none; border-radius: 50%; background: #453c2b; color: #dfce9b; font-size: 13px; font-weight: bold; line-height: 1; cursor: pointer; transition: background .15s ease, color .15s ease; box-sizing: border-box; }
+button.clear-button:hover { background: #63563b; color: #fff; }
+
+/* Dropdown-Ergebnisse */
+.search-results { position: absolute; top: calc(100% + 2px); left: 10px; right: 10px; max-height: 270px; overflow-y: auto; background: #fffdf3; border: 1px solid #d2b66f; border-radius: 9px; box-shadow: 0 10px 28px rgba(0,0,0,0.35); z-index: 1000; }
+.search-result-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #f2ebcc; font-size: 13px; color: #282200; transition: background .12s ease; }
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover, .search-result-item.selected { background: #f3e7b3; color: #4e3d0c; font-weight: 600; }
+.search-result-badge { font-size: 11px; font-weight: normal; color: #8c7333; }
+.search-highlight { background: #ffe484; color: inherit; padding: 0 1px; border-radius: 2px; font-weight: 700; }
+.search-empty-hint { padding: 12px; text-align: center; color: #746b55; font-size: 12px; }
+
+/* Beliebte Shop-Chips */
+.popular-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 6px 0 12px; max-width: 320px; }
+.chip { padding: 5px 12px; border-radius: 16px; background: #f5ecc7; color: #3d300c; font-size: 12px; font-weight: 700; border: 1px solid #d8c278; transition: transform .12s ease, background .12s ease; cursor: pointer; }
+.chip:hover { transform: translateY(-1px); background: #ffeaa0; color: #201700; border-color: #e5cd7c; }
+
+main { height: 436px; background: #213044; overflow: hidden; }
+.view-enter { animation: viewEnter .2s cubic-bezier(.2,.75,.25,1) both; }
+.view-leave { animation: viewLeave .12s ease both; pointer-events: none; }
+@keyframes viewEnter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes viewLeave { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-3px); } }
+.message { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; color: #f5f2e9; }
+.message strong { color: #fffdf5; font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }
+.message span { color: #d6cdbb; font-size: 13px; line-height: 1.45; max-width: 310px; }
+.spinner { width: 28px; height: 28px; border: 3px solid #394b63; border-top-color: #d2b66f; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#cashbackPanel { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+iframe { width: 100%; height: 436px; border: 0; background: #213044; }
+button:not(.icon-button):not(.clear-button):not(.chip) { padding: 10px 18px; border: 0; border-radius: 9px; color: white; background: #b5964c; font-weight: 700; font-size: 13px; cursor: pointer; transition: background .15s ease, transform .12s ease; }
+button:not(.icon-button):not(.clear-button):not(.chip):hover { background: #c5a65c; transform: translateY(-1px); }
+#settingsView { height: 436px; padding: 9px 16px 14px; overflow-y: auto; background: #fffdf3; }
+.settings-title { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.settings-title .icon-button { width: 34px; height: 34px; color: #6d5924; background: #f2e8b6; border-color: #d8c16e; }
+.field { display: block; margin: 12px 0; }
+.field > span { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 700; }
+input[type="text"], select, textarea { width: 100%; padding: 8px 9px; border: 1px solid #d8cc80; border-radius: 8px; background: white; font: inherit; font-size: 13px; }
+textarea { resize: vertical; }
+small { display: block; margin-top: 3px; color: #746b55; font-size: 11px; }
+.toggle { display: flex; align-items: center; justify-content: space-between; margin: 8px 0; padding: 9px 10px; border: 1px solid #eadf9d; border-radius: 9px; background: white; }
+.toggle strong { font-size: 13px; }
+.toggle input { width: 18px; height: 18px; accent-color: #aa8b42; }
+.actions { display: flex; gap: 10px; margin-top: 14px; }
+.actions button { flex: 1; }
+.actions button.secondary { color: #5d551e; background: #f1e9b6; }
+#status { min-height: 18px; margin: 8px 0 0; text-align: center; color: #5d551e; font-size: 12px; }

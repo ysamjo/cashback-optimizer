@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="quick_search"
+        android:enabled="true"
+        android:icon="@drawable/ic_search"
+        android:shortcutShortLabel="@string/widget_name"
+        android:shortcutLongLabel="@string/widget_description">
+        <intent
+            android:action="de.stegmann.cashbackoptimizer.ACTION_QUICK_SEARCH"
+            android:targetPackage="de.stegmann.cashbackoptimizer"
+            android:targetClass="de.stegmann.cashbackoptimizer.MainActivity" />
+    </shortcut>
+</shortcuts>

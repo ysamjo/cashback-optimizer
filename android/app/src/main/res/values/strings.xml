@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cashback Optimizer</string>
+    <string name="no_browser">Kein Browser gefunden</string>
+    <string name="widget_name">Schnellsuche</string>
+    <string name="widget_description">Cashback-Shops direkt durchsuchen</string>
+    <string name="search_hint">Shop suchen (z. B. Otto, Zalando)...</string>
+    <string name="search_no_results">Kein passender Shop gefunden</string>
+    <string name="clear">Löschen</string>
+    <string name="close">Schließen</string>
+    <string name="recent_search_badge">Zuletzt gesucht</string>
+</resources>
