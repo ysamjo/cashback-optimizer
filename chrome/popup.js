@@ -28,6 +28,12 @@ const HOST_OVERRIDES = {
   'booking.com': 'Booking.com'
 };
 
+// Muss mit background.js übereinstimmen: erzwingt einen Neuladen nach Codeänderungen.
+const SHOP_CACHE_VERSION = '2';
+const SHOP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+// Bei einem Fehltreffer wird nur neu geladen, wenn die Liste älter als das hier ist.
+const SHOP_REVALIDATE_MIN_AGE_MS = 30 * 60 * 1000;
+
 const elements = Object.fromEntries(Object.keys(DEFAULTS).map((id) => [id, document.getElementById(id)]));
 const cashbackView = document.getElementById('cashbackView');
 const settingsView = document.getElementById('settingsView');
@@ -54,8 +60,10 @@ function isExcludedUrl(url, excludedDomains) {
   const host = parsed.hostname.toLowerCase();
   if (host === 'store.google.com' || host.endsWith('.store.google.com')) return false;
   if (/(^|\.)google\./i.test(host)) return true;
-  const href = parsed.href.toLowerCase();
-  return excludedDomains.some((entry) => href.includes(String(entry).toLowerCase()));
+  // Nur Host und Pfad prüfen – Query-Parameter wie ?utm_source=mydealz.de
+  // dürfen die Erkennung auf der Zielseite nicht abschalten.
+  const target = `${parsed.hostname}${parsed.pathname}`.toLowerCase();
+  return excludedDomains.some((entry) => target.includes(String(entry).toLowerCase()));
 }
 function findShopByHost(host, names) {
   for (const [domain, shop] of Object.entries(HOST_OVERRIDES)) if (matchesDomain(host, domain)) return shop;
@@ -75,18 +83,7 @@ async function requestText(url) {
   if (!result?.ok) throw new Error(result?.error || 'Abruf fehlgeschlagen');
   return result.responseText;
 }
-async function getShopNames() {
-  if (cachedShopNames.length > 0) return cachedShopNames;
-  const cache = await chrome.storage.local.get(['cb_optimizer_names', 'cb_optimizer_time']);
-  if (cache.cb_optimizer_names && Date.now() - Number(cache.cb_optimizer_time || 0) < 86400000) {
-    try {
-      const names = JSON.parse(cache.cb_optimizer_names);
-      if (Array.isArray(names) && names.length > 0) {
-        cachedShopNames = names;
-        return names;
-      }
-    } catch {}
-  }
+async function fetchShopNames() {
   const html = await requestText(`https://${MAIN_DOMAIN}/`);
   const pattern = /class=["'][^"']*\bshop-area-header\b[^"']*\bfilter-tag\b[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/gi;
   const names = [];
@@ -97,12 +94,77 @@ async function getShopNames() {
   const uniqueNames = [...new Set(names)];
   if (uniqueNames.length > 0) {
     cachedShopNames = uniqueNames;
-    await chrome.storage.local.set({ cb_optimizer_names: JSON.stringify(uniqueNames), cb_optimizer_time: String(Date.now()) });
+    await chrome.storage.local.set({
+      cb_optimizer_names: JSON.stringify(uniqueNames),
+      cb_optimizer_time: String(Date.now()),
+      cb_optimizer_cache_version: SHOP_CACHE_VERSION
+    });
   }
   return uniqueNames;
 }
+
+async function getShopNames({ force = false } = {}) {
+  if (!force && cachedShopNames.length > 0) return cachedShopNames;
+  if (!force) {
+    const cache = await chrome.storage.local.get(['cb_optimizer_names', 'cb_optimizer_time', 'cb_optimizer_cache_version']);
+    const fresh = cache.cb_optimizer_cache_version === SHOP_CACHE_VERSION
+      && cache.cb_optimizer_names
+      && Date.now() - Number(cache.cb_optimizer_time || 0) < SHOP_CACHE_TTL_MS;
+    if (fresh) {
+      try {
+        const names = JSON.parse(cache.cb_optimizer_names);
+        if (Array.isArray(names) && names.length > 0) {
+          cachedShopNames = names;
+          return names;
+        }
+      } catch {}
+    }
+  }
+  return fetchShopNames();
+}
+
+async function shopCacheAgeMs() {
+  const cache = await chrome.storage.local.get(['cb_optimizer_time']);
+  const time = Number(cache.cb_optimizer_time || 0);
+  return time ? Date.now() - time : null;
+}
+
+async function refreshShopNames() {
+  cachedShopNames = [];
+  const result = await chrome.runtime.sendMessage({ type: 'cashbackOptimizerRefreshNames' }).catch(() => null);
+  if (!result?.ok) return null;
+  return getShopNames();
+}
 function showSettings(show) {
   transitionViews(show ? cashbackView : settingsView, show ? settingsView : cashbackView);
+  if (show) renderShopCacheInfo();
+}
+
+function formatCacheAge(ms) {
+  if (ms === null) return 'noch nicht geladen';
+  const minutes = Math.round(ms / 60000);
+  if (minutes < 1) return 'gerade geladen';
+  if (minutes < 60) return `vor ${minutes} min geladen`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `vor ${hours} h geladen`;
+  return `vor ${Math.round(hours / 24)} d geladen`;
+}
+
+async function renderShopCacheInfo() {
+  const info = document.getElementById('shopCacheInfo');
+  if (!info) return;
+  const cache = await chrome.storage.local.get(['cb_optimizer_names', 'cb_optimizer_time', 'cb_optimizer_cache_version']);
+  let count = 0;
+  try {
+    const parsed = JSON.parse(cache.cb_optimizer_names || '[]');
+    if (Array.isArray(parsed)) count = parsed.length;
+  } catch {}
+  if (cache.cb_optimizer_cache_version !== SHOP_CACHE_VERSION) {
+    info.textContent = 'Format veraltet – bitte neu laden';
+    return;
+  }
+  const age = cache.cb_optimizer_time ? Date.now() - Number(cache.cb_optimizer_time) : null;
+  info.textContent = `${count} Shops · ${formatCacheAge(age)}`;
 }
 function transitionViews(from, to) {
   if (from.classList.contains('hidden') || !to.classList.contains('hidden')) return;
@@ -347,7 +409,15 @@ async function loadCashback() {
       return;
     }
     const host = new URL(tab.url).hostname.toLowerCase();
-    const shop = findShopByHost(host, allShopNames);
+    let shop = findShopByHost(host, allShopNames);
+    if (!shop) {
+      // Einmal frisch nachladen: fängt neue Shops und unvollständig gespeicherte Listen ab.
+      const age = await shopCacheAgeMs();
+      if (age === null || age > SHOP_REVALIDATE_MIN_AGE_MS) {
+        const refreshed = await getShopNames({ force: true }).catch(() => []);
+        if (refreshed.length !== allShopNames.length) shop = findShopByHost(host, refreshed);
+      }
+    }
     if (!shop) {
       transitionViews(document.getElementById('loading'), document.getElementById('unsupported'));
       focusSearchInput();
@@ -363,6 +433,47 @@ async function loadCashback() {
 
 document.getElementById('settingsButton').addEventListener('click', () => showSettings(true));
 document.getElementById('backButton').addEventListener('click', () => showSettings(false));
+document.getElementById('refreshShops').addEventListener('click', async (e) => {
+  const button = e.currentTarget;
+  button.disabled = true;
+  status.textContent = 'Lade Shop-Liste …';
+  const names = await refreshShopNames();
+  button.disabled = false;
+  await renderShopCacheInfo();
+  if (!names?.length) {
+    status.textContent = 'Shop-Liste konnte nicht geladen werden.';
+    return;
+  }
+
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.url) {
+    status.textContent = `${names.length} Shops geladen.`;
+    return;
+  }
+  const settings = await chrome.storage.sync.get({ ...DEFAULTS, extraExcludedDomains: [] });
+  const excluded = [...new Set([
+    ...(Array.isArray(settings.excludedDomains) ? settings.excludedDomains : DEFAULT_EXCLUDED_DOMAINS),
+    ...(Array.isArray(settings.extraExcludedDomains) ? settings.extraExcludedDomains : [])
+  ])];
+  let shop = null;
+  try {
+    if (isExcludedUrl(tab.url, excluded)) {
+      status.textContent = `${names.length} Shops geladen – diese Seite ist ausgeschlossen.`;
+      return;
+    }
+    shop = findShopByHost(new URL(tab.url).hostname.toLowerCase(), names);
+  } catch {
+    status.textContent = `${names.length} Shops geladen.`;
+    return;
+  }
+  if (shop) {
+    detectedShop = shop;
+    showSettings(false);
+    displayShop(shop);
+  } else {
+    status.textContent = `${names.length} Shops geladen – für diese Seite ist keiner dabei.`;
+  }
+});
 document.getElementById('openMain').addEventListener('click', openCurrentUrl);
 document.getElementById('openTab').addEventListener('click', openCurrentUrl);
 document.getElementById('save').addEventListener('click', async () => {

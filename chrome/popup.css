@@ -74,4 +74,7 @@ small { display: block; margin-top: 3px; color: #746b55; font-size: 11px; }
 .actions { display: flex; gap: 10px; margin-top: 14px; }
 .actions button { flex: 1; }
 .actions button.secondary { color: #5d551e; background: #f1e9b6; }
+.cache-row { display: flex; align-items: center; gap: 8px; }
+.cache-row small { flex: 1; margin-top: 0; }
+.cache-row button { flex: 0 0 auto; padding: 7px 11px; border: 1px solid #d8c16e; border-radius: 8px; color: #5d551e; background: #f1e9b6; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
 #status { min-height: 18px; margin: 8px 0 0; text-align: center; color: #5d551e; font-size: 12px; }

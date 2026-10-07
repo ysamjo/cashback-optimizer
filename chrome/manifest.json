@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Cashback-Optimizer Suite",
-  "version": "1.4.4",
+  "version": "1.4.6",
   "description": "Zeigt Cashback-Möglichkeiten auf unterstützten Shopseiten und ergänzt Links im Cashback-Optimizer.",
   "permissions": ["storage", "activeTab", "tabs", "contextMenus"],
   "host_permissions": [

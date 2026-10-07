@@ -53,7 +53,14 @@
     <label class="toggle"><span><strong>Prefetch verwenden</strong></span><input id="popupPrefetch" type="checkbox"></label>
     <label class="field"><span>Prefetch-Zeitpunkt</span><select id="prefetchMode"><option value="idle">Automatisch im Leerlauf</option><option value="intent">Bei Mausberührung/Antippen</option><option value="click">Erst beim Öffnen</option></select></label>
     <label class="toggle"><span><strong>Desktop-Iframe vorladen</strong></span><input id="desktopIframePrefetch" type="checkbox"></label>
-    <label class="field"><span>Ausgeschlossene Seiten</span><textarea id="excludedDomains" rows="6" placeholder="Eine Domain oder URL pro Zeile"></textarea><small>Enthält die Standard-Ausschlüsse. Einträge können ergänzt oder entfernt werden.</small></label>
+    <label class="field"><span>Ausgeschlossene Seiten</span><textarea id="excludedDomains" rows="6" placeholder="Eine Domain oder URL pro Zeile"></textarea><small>Enthält die Standard-Ausschlüsse. Einträge können ergänzt oder entfernt werden. Geprüft werden nur Domain und Pfad – Affiliate-Parameter wie <code>?utm_source=…</code> schließen eine Seite nicht mehr aus.</small></label>
+    <div class="field"><span>Shop-Liste</span>
+      <div class="cache-row">
+        <small id="shopCacheInfo">wird geladen …</small>
+        <button id="refreshShops" type="button">Neu laden</button>
+      </div>
+      <small>Wird ein Shop nicht erkannt, hier neu laden und die Shopseite aktualisieren.</small>
+    </div>
     <div class="actions"><button id="reset" class="secondary" type="button">Standard</button><button id="save" type="button">Speichern</button></div>
     <p id="status"></p>
   </main>

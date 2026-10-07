@@ -64,11 +64,13 @@
   }
 
   function isExcludedPage() {
-    const href = location.href.toLowerCase();
     const host = location.hostname.toLowerCase();
     if (host === 'store.google.com' || host.endsWith('.store.google.com')) return false;
     if (/(^|\.)google\./i.test(host)) return true;
-    return EXCLUDED_DOMAINS.some((entry) => href.includes(entry));
+    // Nur Host und Pfad prüfen – Query-Parameter wie ?utm_source=mydealz.de
+    // dürfen die Erkennung auf der Zielseite nicht abschalten.
+    const target = (location.hostname + location.pathname).toLowerCase();
+    return EXCLUDED_DOMAINS.some((entry) => target.includes(entry));
   }
 
   function findShopByHost(host, names) {
@@ -432,15 +434,19 @@
     observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
   }
 
-  function getShopNames() {
+  const SHOP_CACHE_VERSION = '2';
+
+  function getShopNames(force = false) {
     const CACHE_KEY = "names";
     const TIME_KEY = "time";
+    const VERSION_KEY = "namesVersion";
     const LIFE = 86400000;
 
     const cached = getStorage(CACHE_KEY);
     const time = Number(getStorage(TIME_KEY) || 0);
+    const versionOk = getStorage(VERSION_KEY) === SHOP_CACHE_VERSION;
 
-    if (cached && (Date.now() - time < LIFE)) {
+    if (!force && cached && versionOk && (Date.now() - time < LIFE)) {
       try {
         const names = JSON.parse(cached);
         if (Array.isArray(names) && names.length > 0) return Promise.resolve(names);
@@ -464,6 +470,7 @@
           if (names.length > 0) {
             setStorage(CACHE_KEY, JSON.stringify(names));
             setStorage(TIME_KEY, String(Date.now()));
+            setStorage(VERSION_KEY, SHOP_CACHE_VERSION);
           }
           resolve(names);
         } catch (e) {
@@ -476,9 +483,22 @@
   }
 
   let shopNamesPromise = null;
-  function loadShopNames() {
-    if (!shopNamesPromise) shopNamesPromise = getShopNames();
+  function loadShopNames(force = false) {
+    if (!shopNamesPromise || force) {
+      shopNamesPromise = getShopNames(force).then((names) => {
+        // Leere Ergebnisse nicht merken, damit der nächste Versuch neu laden darf.
+        if (!Array.isArray(names) || names.length === 0) shopNamesPromise = null;
+        return names;
+      });
+    }
     return shopNamesPromise;
+  }
+
+  // Erster Versuch aus dem Cache, bei Fehltreffer einmal frisch nachladen.
+  async function resolveShop(host) {
+    const shop = findShopByHost(host, await loadShopNames());
+    if (shop) return shop;
+    return findShopByHost(host, await loadShopNames(true));
   }
 
   function runPopup() {
@@ -486,8 +506,7 @@
 
     if (window.top !== window.self || isExcludedPage()) return;
 
-    loadShopNames().then(names => {
-      const shop = findShopByHost(host, names);
+    resolveShop(host).then(shop => {
       if (!shop) return;
 
       const id = "cb_" + Math.random().toString(36).substring(2, 7);

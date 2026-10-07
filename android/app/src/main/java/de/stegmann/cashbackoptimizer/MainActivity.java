@@ -131,8 +131,78 @@ public final class MainActivity extends ComponentActivity {
     }
 
     private void handleSearchIntent(Intent intent) {
-        if (intent != null && ACTION_QUICK_SEARCH.equals(intent.getAction())) {
+        if (intent == null) return;
+        if (ACTION_QUICK_SEARCH.equals(intent.getAction())) {
             openQuickSearch();
+            return;
+        }
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            String shared = extractSharedText(intent);
+            if (shared != null && !shared.isEmpty()) {
+                handleSharedText(shared);
+            }
+        }
+    }
+
+    /** Liest den über das Share-Sheet geteilten Text (Link oder Freitext) aus. */
+    private String extractSharedText(Intent intent) {
+        String type = intent.getType();
+        if (type != null && !type.startsWith("text/")) return null;
+        CharSequence text = intent.getCharSequenceExtra(Intent.EXTRA_TEXT);
+        if (text == null || text.toString().trim().isEmpty()) {
+            text = intent.getCharSequenceExtra(Intent.EXTRA_SUBJECT);
+        }
+        return text != null ? text.toString().trim() : null;
+    }
+
+    /** Sucht einen bekannten Händler im geteilten Text und öffnet dessen Suchseite. */
+    private void handleSharedText(String text) {
+        String shop = findShopInText(text);
+        if (shop != null) {
+            selectShop(shop);
+            return;
+        }
+        Toast.makeText(this, R.string.share_no_shop, Toast.LENGTH_SHORT).show();
+        openQuickSearchWithQuery(deriveKeyword(text));
+    }
+
+    /** Liefert den längsten bekannten Händlernamen, der im Text vorkommt (normalisiert verglichen). */
+    private String findShopInText(String text) {
+        String normText = normalize(text);
+        String best = null;
+        int bestLen = 0;
+        for (String shop : allShops) {
+            String normShop = normalize(shop);
+            if (normShop.length() < 3) continue;
+            if (normText.contains(normShop) && normShop.length() > bestLen) {
+                best = shop;
+                bestLen = normShop.length();
+            }
+        }
+        return best;
+    }
+
+    /** Leitet aus dem geteilten Text ein Suchstichwort ab (bei URLs die Domain ohne TLD). */
+    private String deriveKeyword(String text) {
+        java.util.regex.Matcher matcher = android.util.Patterns.WEB_URL.matcher(text);
+        if (matcher.find()) {
+            Uri uri = Uri.parse(matcher.group());
+            String host = uri.getHost();
+            if (host != null) {
+                String clean = host.toLowerCase().replaceFirst("^www\\.", "");
+                String[] parts = clean.split("\\.");
+                return parts.length >= 2 ? parts[parts.length - 2] : parts[0];
+            }
+        }
+        String trimmed = text.trim();
+        return trimmed.length() > 60 ? trimmed.substring(0, 60) : trimmed;
+    }
+
+    private void openQuickSearchWithQuery(String query) {
+        openQuickSearch();
+        if (query != null && !query.isEmpty()) {
+            editSearchQuery.setText(query);
+            editSearchQuery.setSelection(query.length());
         }
     }
 

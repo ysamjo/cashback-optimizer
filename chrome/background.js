@@ -18,7 +18,16 @@ const HOST_OVERRIDES = {
   'booking.com': 'Booking.com'
 };
 
+// Wird erhöht, wenn sich Extraktion oder Format der Shop-Liste ändert.
+// Ein Versionswechsel verwirft den lokalen Cache, damit neue Shops sofort greifen.
+const SHOP_CACHE_VERSION = '2';
+const SHOP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+// Nach einem Fehltreffer wird höchstens alle 10 Minuten frisch nachgeladen.
+const SHOP_REVALIDATE_COOLDOWN_MS = 10 * 60 * 1000;
+
 let namesPromise = null;
+let shopNamesInMemory = null;
+let lastRevalidateAt = 0;
 const badgeGenerations = new Map();
 
 function normalize(value) {
@@ -71,28 +80,91 @@ function parseShopNames(html) {
   return [...new Set(names)];
 }
 
+async function readCachedShopNames() {
+  const cache = await chrome.storage.local.get(['cb_optimizer_names', 'cb_optimizer_time', 'cb_optimizer_cache_version']);
+  if (cache.cb_optimizer_cache_version !== SHOP_CACHE_VERSION) return null;
+  if (!cache.cb_optimizer_names) return null;
+  if (Date.now() - Number(cache.cb_optimizer_time || 0) >= SHOP_CACHE_TTL_MS) return null;
+  try {
+    const names = JSON.parse(cache.cb_optimizer_names);
+    if (Array.isArray(names) && names.length > 0) return names;
+  } catch {}
+  return null;
+}
+
+async function fetchShopNames() {
+  const response = await fetch(MAIN_URL, { credentials: 'omit', cache: 'no-cache' });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const names = parseShopNames(await response.text());
+  // Eine leere oder unvollständige Antwort wird nicht gespeichert.
+  if (names.length > 0) {
+    await chrome.storage.local.set({
+      cb_optimizer_names: JSON.stringify(names),
+      cb_optimizer_time: String(Date.now()),
+      cb_optimizer_cache_version: SHOP_CACHE_VERSION
+    });
+  }
+  return names;
+}
+
 async function getShopNames() {
-  if (namesPromise) return namesPromise;
-  namesPromise = (async () => {
-    const cache = await chrome.storage.local.get(['cb_optimizer_names', 'cb_optimizer_time']);
-    if (cache.cb_optimizer_names && Date.now() - Number(cache.cb_optimizer_time || 0) < 86400000) {
-      try {
-        const names = JSON.parse(cache.cb_optimizer_names);
-        if (Array.isArray(names) && names.length > 0) return names;
-      } catch {}
-    }
-    const response = await fetch(MAIN_URL, { credentials: 'omit', cache: 'no-cache' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const names = parseShopNames(await response.text());
-    if (names.length > 0) {
-      await chrome.storage.local.set({
-        cb_optimizer_names: JSON.stringify(names),
-        cb_optimizer_time: String(Date.now())
+  if (shopNamesInMemory) return shopNamesInMemory;
+  if (!namesPromise) {
+    namesPromise = (async () => {
+      const cached = await readCachedShopNames();
+      if (cached) return cached;
+      return fetchShopNames();
+    })()
+      .then((names) => {
+        shopNamesInMemory = names;
+        return names;
+      })
+      .catch(() => {
+        // Fehler nicht dauerhaft merken – der nächste Aufruf darf neu versuchen.
+        namesPromise = null;
+        return [];
       });
+  }
+  return namesPromise;
+}
+
+// Wird nur aufgerufen, wenn ein Host gegen die vorhandene Liste nicht erkannt wurde.
+// Fängt neue Shops und unvollständig gespeicherte Listen ab, ohne die Seite zu belasten.
+async function revalidateShopNames() {
+  if (Date.now() - lastRevalidateAt < SHOP_REVALIDATE_COOLDOWN_MS) return shopNamesInMemory || [];
+  lastRevalidateAt = Date.now();
+  try {
+    const names = await fetchShopNames();
+    if (names.length > 0) {
+      shopNamesInMemory = names;
+      namesPromise = Promise.resolve(names);
     }
     return names;
-  })().catch(() => []);
-  return namesPromise;
+  } catch {
+    return shopNamesInMemory || [];
+  }
+}
+
+async function clearShopNamesCache() {
+  shopNamesInMemory = null;
+  namesPromise = null;
+  lastRevalidateAt = 0;
+  await chrome.storage.local.remove(['cb_optimizer_names', 'cb_optimizer_time', 'cb_optimizer_cache_version']);
+}
+
+async function shopCacheInfo() {
+  const cache = await chrome.storage.local.get(['cb_optimizer_names', 'cb_optimizer_time', 'cb_optimizer_cache_version']);
+  let count = 0;
+  try {
+    const parsed = JSON.parse(cache.cb_optimizer_names || '[]');
+    if (Array.isArray(parsed)) count = parsed.length;
+  } catch {}
+  const time = Number(cache.cb_optimizer_time || 0);
+  return {
+    count,
+    ageMs: time ? Date.now() - time : null,
+    versionMatches: cache.cb_optimizer_cache_version === SHOP_CACHE_VERSION
+  };
 }
 
 async function getSettings() {
@@ -108,6 +180,13 @@ async function getSettings() {
   return settings;
 }
 
+// Nur Host und Pfad prüfen – niemals Query oder Fragment. Sonst schaltet ein
+// Affiliate-Parameter wie ?utm_source=mydealz.de die Erkennung auf der
+// Zielseite ab, obwohl die Seite selbst nicht ausgeschlossen ist.
+function exclusionTarget(parsed) {
+  return `${parsed.hostname}${parsed.pathname}`.toLowerCase();
+}
+
 function isExcludedUrl(url, excludedDomains) {
   let parsed;
   try { parsed = new URL(url); } catch { return true; }
@@ -115,7 +194,8 @@ function isExcludedUrl(url, excludedDomains) {
   const host = parsed.hostname.toLowerCase();
   if (matchesDomain(host, 'store.google.com')) return false;
   if (/(^|\.)google\./i.test(host)) return true;
-  return excludedDomains.some((entry) => parsed.href.toLowerCase().includes(entry));
+  const target = exclusionTarget(parsed);
+  return excludedDomains.some((entry) => target.includes(entry));
 }
 
 async function setBadge(tabId, shop) {
@@ -135,7 +215,11 @@ async function updateBadgeForTab(tabId, url) {
 
   const host = new URL(url).hostname.toLowerCase();
   const directShop = findShopByHost(host, []);
-  const shop = directShop || findShopByHost(host, await getShopNames());
+  let shop = directShop || findShopByHost(host, await getShopNames());
+  if (!shop) {
+    const fresh = await revalidateShopNames();
+    if (fresh.length > 0) shop = findShopByHost(host, fresh);
+  }
   if (generation !== badgeGenerations.get(tabId)) return;
   await setBadge(tabId, shop).catch(() => {});
 }
@@ -148,6 +232,26 @@ async function refreshAllTabs() {
 }
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type === 'cashbackOptimizerShopInfo') {
+    shopCacheInfo().then((info) => sendResponse({ ok: true, ...info }));
+    return true;
+  }
+
+  if (message?.type === 'cashbackOptimizerRefreshNames') {
+    (async () => {
+      await clearShopNamesCache();
+      try {
+        const names = await fetchShopNames();
+        shopNamesInMemory = names;
+        namesPromise = Promise.resolve(names);
+        sendResponse({ ok: true, count: names.length });
+      } catch (error) {
+        sendResponse({ ok: false, error: String(error?.message || error) });
+      }
+    })();
+    return true;
+  }
+
   if (message?.type !== 'cashbackOptimizerFetch') return false;
 
   let url;
