@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "cashback_optimizer",
+  "project_id": "206b860e-0fbc-4035-9991-13c0dbc528d7"
+}

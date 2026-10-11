@@ -11,3 +11,10 @@ local.properties
 *.zip
 node_modules/
 .idea/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads/proxieddb/
+*.gate.lock*
