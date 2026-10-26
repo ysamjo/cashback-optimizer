@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Cashback-Optimizer Suite (v4.55 - TLD Recognition & DDG Ducky)
+// @name         Cashback-Optimizer Suite (v4.56 - TLD Recognition & DDG Ducky)
 // @namespace    http://tampermonkey.net/
-// @version      4.55
+// @version      4.56
 // @description  TLD Recognition, DuckDuckGo Ducky Links, Dark Mode Support, iOS Stable, Full Link Support
 // @author       ruler
 // @match        *://*/*
@@ -128,8 +128,10 @@
 
         const linkStyle = "color:inherit; text-decoration:none; border-bottom: 1px dotted gray;";
 
-        function enrich() {
-            document.querySelectorAll('.shop-area-header.filter-tag, .voucher-area-header.filter-tag, .item-name').forEach(el => {
+        const HEADER_SELECTOR = '.shop-area-header.filter-tag, .voucher-area-header.filter-tag, .item-name';
+        const LINK_SELECTOR = 'a';
+        function enrich(headers) {
+            headers.forEach(el => {
                 if (el.querySelector('a')) return;
                 const text = el.textContent.trim();
                 const shopArea = el.closest('.shop-area, .voucher-area');
@@ -168,8 +170,51 @@
                 if (url) el.innerHTML = `<a href="${url}" target="_blank" style="${linkStyle}">${text}</a>`;
             });
         }
-        enrich();
-        new MutationObserver(enrich).observe(document.body, { childList: true, subtree: true });
+
+        // Nur betroffene Überschriften sammeln; eigene Link-Mutationen überspringen.
+        const pendingHeaders = new Set();
+        let framePending = false;
+        const queueHeader = (el) => {
+          if (el && !el.querySelector(LINK_SELECTOR)) pendingHeaders.add(el);
+        };
+        const collectHeaders = (root) => {
+          if (root.nodeType !== 1) return;
+          if (root.matches(HEADER_SELECTOR)) queueHeader(root);
+          root.querySelectorAll(HEADER_SELECTOR).forEach(queueHeader);
+        };
+        const flushHeaders = () => {
+          framePending = false;
+          const batch = [];
+          for (const el of pendingHeaders) {
+            pendingHeaders.delete(el);
+            if (el.isConnected) batch.push(el);
+            if (batch.length === 50) break;
+          }
+          enrich(batch);
+          scheduleHeaders();
+        };
+        const scheduleHeaders = () => {
+          if (!framePending && pendingHeaders.size) {
+            framePending = true;
+            requestAnimationFrame(flushHeaders);
+          }
+        };
+        collectHeaders(document.body || document.documentElement);
+        scheduleHeaders();
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            const target = mutation.target.nodeType === 1
+              ? mutation.target : mutation.target.parentElement;
+            const header = target?.closest(HEADER_SELECTOR);
+            if (header) {
+              queueHeader(header);
+            } else {
+              mutation.addedNodes.forEach(collectHeaders);
+            }
+          }
+          scheduleHeaders();
+        });
+        observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
     }
 
     // -------------------------

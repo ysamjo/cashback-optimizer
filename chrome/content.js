@@ -396,41 +396,77 @@
       });
     };
 
-    const enrich = () => {
-      document.querySelectorAll('.shop-area-header.filter-tag, .voucher-area-header.filter-tag, .item-name')
-        .forEach(el => {
-          if (el.querySelector('a.optimizer-link')) return;
+    const HEADER_SELECTOR = '.shop-area-header.filter-tag, .voucher-area-header.filter-tag, .item-name';
+    const LINK_SELECTOR = 'a.optimizer-link';
+    const enrich = (headers) => {
+      headers.forEach(el => {
+        if (el.querySelector('a.optimizer-link')) return;
 
-          const bubble = el.querySelector('.discountBanner');
-          if (bubble && (bubble.hasAttribute('onclick') || typeof bubble.onclick === 'function')) {
-            wireClickableHeader(el, bubble);
-            return;
-          }
+        const bubble = el.querySelector('.discountBanner');
+        if (bubble && (bubble.hasAttribute('onclick') || typeof bubble.onclick === 'function')) {
+          wireClickableHeader(el, bubble);
+          return;
+        }
 
-          const isItem = el.classList.contains('item-name');
-          const text = el.textContent.trim();
-          const shopArea = el.closest('.shop-area, .voucher-area');
-          const rawName = shopArea?.querySelector('.filter-tag')?.textContent.replace(/<.*%/, '').trim() || "";
-          const searchName = (rawName === "Netto MD") ? "Netto" : rawName;
+        const isItem = el.classList.contains('item-name');
+        const text = el.textContent.trim();
+        const shopArea = el.closest('.shop-area, .voucher-area');
+        const rawName = shopArea?.querySelector('.filter-tag')?.textContent.replace(/<.*%/, '').trim() || "";
+        const searchName = (rawName === "Netto MD") ? "Netto" : rawName;
 
-          const isVoucherSection = getIsVoucherSection(el);
-          const url = buildUrl(text, searchName, isVoucherSection, isItem);
+        const isVoucherSection = getIsVoucherSection(el);
+        const url = buildUrl(text, searchName, isVoucherSection, isItem);
 
-          if (url) {
-            const isInternal = url.includes(MAIN_DOMAIN);
-            el.innerHTML = `<a href="${url}" target="${isInternal ? '_self' : '_blank'}" rel="noreferrer" class="optimizer-link" referrerpolicy="no-referrer" style="color:inherit !important; text-decoration:none !important; border-bottom:1px dotted gray !important;">${el.innerHTML}</a>`;
-          }
-        });
+        if (url) {
+          const isInternal = url.includes(MAIN_DOMAIN);
+          el.innerHTML = `<a href="${url}" target="${isInternal ? '_self' : '_blank'}" rel="noreferrer" class="optimizer-link" referrerpolicy="no-referrer" style="color:inherit !important; text-decoration:none !important; border-bottom:1px dotted gray !important;">${el.innerHTML}</a>`;
+        }
+      });
     };
 
-    enrich();
-
-    const observer = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        if (m.addedNodes && m.addedNodes.length) { enrich(); break; }
+    // Nur betroffene Überschriften sammeln; eigene Link-Mutationen überspringen.
+    const pendingHeaders = new Set();
+    let framePending = false;
+    const queueHeader = (el) => {
+      if (el && !el.querySelector(LINK_SELECTOR)) pendingHeaders.add(el);
+    };
+    const collectHeaders = (root) => {
+      if (root.nodeType !== 1) return;
+      if (root.matches(HEADER_SELECTOR)) queueHeader(root);
+      root.querySelectorAll(HEADER_SELECTOR).forEach(queueHeader);
+    };
+    const flushHeaders = () => {
+      framePending = false;
+      const batch = [];
+      for (const el of pendingHeaders) {
+        pendingHeaders.delete(el);
+        if (el.isConnected) batch.push(el);
+        if (batch.length === 50) break;
       }
+      enrich(batch);
+      scheduleHeaders();
+    };
+    const scheduleHeaders = () => {
+      if (!framePending && pendingHeaders.size) {
+        framePending = true;
+        requestAnimationFrame(flushHeaders);
+      }
+    };
+    collectHeaders(document.body || document.documentElement);
+    scheduleHeaders();
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        const target = mutation.target.nodeType === 1
+          ? mutation.target : mutation.target.parentElement;
+        const header = target?.closest(HEADER_SELECTOR);
+        if (header) {
+          queueHeader(header);
+        } else {
+          mutation.addedNodes.forEach(collectHeaders);
+        }
+      }
+      scheduleHeaders();
     });
-
     observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
   }
 

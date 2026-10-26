@@ -1,4 +1,4 @@
-# Cashback-Optimizer Suite 1.4.6
+# Cashback-Optimizer Suite 1.4.7
 
 Chrome öffnen: `chrome://extensions` → Entwicklermodus → **Entpackte Erweiterung laden** → diesen Ordner auswählen.
 
@@ -13,3 +13,7 @@ Unter **Shop-Liste** in den Einstellungen stehen die Anzahl der geladenen Shops 
 Unter **Anzeige** kann alternativ das bisherige Popup unten rechts auf der Webseite aktiviert werden.
 
 Das bisherige Tampermonkey-Script deaktivieren, damit die Funktionen nicht doppelt ausgeführt werden. Nach Einstellungsänderungen offene Shopseiten neu laden.
+
+Version 1.4.7: Dynamische Link-Ergänzungen verarbeiten nur geänderte Überschriften, gebündelt in maximal 50 Elementen pro Browser-Frame.
+
+Performance-/Regressionsprüfung (Ego Lite): `ego-browser nodejs < tools/verify-link-performance.mjs` aus dem Repository. Der Test vergleicht den Linker mit Commit `24bfc70` auf einer isolierten Testseite mit 1.300 Anbieterüberschriften. Bei zehn fremden DOM-Änderungen sinkt die Zahl erneut geprüfter Überschriften von 13.010 auf 0; dies ist eine Aufwandsmessung, keine Messung der gesamten Ladezeit. Geprüft werden außerdem neue Container, Text-Ersetzungen, entfernte Knoten und doppelte Links in Erweiterung, Userscript und Android-Asset.
