@@ -239,6 +239,462 @@
     "mycashbacks": "mycashbacks.com"
   };
 
+  // PAYBACK-Shop-IDs (lp…) für Shops mit „Payback“-Zeile auf cashback-optimizer.de.
+  // Schlüssel: normalisierter Shopname. Regenerieren: node tools/payback-shop-ids.mjs
+  const PAYBACK_SHOP_IDS = {
+    "otherstories": "lp713076", // & Other Stories → & Other Stories
+    "11": "lp731048", // 1&1 → 1&1
+    "3pagen": "lp712451", // 3Pagen → 3PAGEN
+    "43einhalb": "lp766595", // 43einhalb → 43einhalb
+    "aboutyou": "lp620473", // About You → ABOUT YOU
+    "acer": "lp631008", // Acer → Acer
+    "adidas": "lp573967", // Adidas → adidas
+    "adticket": "lp752966", // ADticket → ADticket
+    "aeg": "lp721225", // AEG → AEG
+    "agoda": "lp717770", // Agoda → Agoda
+    "aktionmensch": "lp765893", // Aktion Mensch → Aktion Mensch
+    "aktivshop": "lp516459", // Aktivshop → aktivshop
+    "aliexpress": "lp634353", // AliExpress → AliExpress
+    "all4golf": "lp707471", // All4Golf → all4golf
+    "alsahundewelt": "lp571216", // Alsa Hundewelt → alsa-hundewelt
+    "amazon": "lp717463", // Amazon → Amazon
+    "ambientedirect": "lp712239", // Ambiente Direct → AmbienteDirect
+    "ameropa": "lp721699", // Ameropa → Ameropa
+    "amorelie": "lp627651", // Amorelie → AMORELIE
+    "angelplatzde": "lp627785", // Angelplatz.de → Angelplatz
+    "anker": "lp721243", // Anker → Anker
+    "ankersolix": "lp753209", // Anker SOLIX → Anker Solix
+    "ankerkraut": "lp766642", // Ankerkraut → Ankerkraut
+    "aosom": "lp713382", // Aosom → Aosom
+    "apodiscounter": "lp721742", // apodiscounter → apodiscounter
+    "apollo": "lp18", // Apollo → Apollo-Optik
+    "apple": "lp604886", // Apple → Apple
+    "aral": "lp181", // Aral → Aral
+    "asambeauty": "lp736", // ASAMBEAUTY → Asambeauty
+    "asgoodasnew": "lp717774", // Asgoodasnew → asgoodasnew
+    "asics": "lp717771", // Asics → ASICS
+    "asmc": "lp623656", // ASMC → ASMC
+    "asos": "lp518176", // Asos → asos
+    "ateliergoldner": "lp616682", // Atelier GOLDNER → GOLDNER
+    "autodoc": "lp718492", // AUTODOC → Autodoc
+    "avena": "lp632962", // Avena → Avena
+    "avocadostore": "lp732974", // Avocadostore → avocadostore
+    "bbhotels": "lp713400", // B&B Hotels → B&B HOTELS
+    "babista": "lp625955", // BABISTA → Babista
+    "babyartikelde": "lp731138", // Babyartikel.de → babyartikel_de
+    "babymarkt": "lp495130", // Babymarkt → babymarkt
+    "bader": "lp10024026", // Bader → Bader
+    "baldurgarten": "lp483546", // Baldur Garten → BALDUR-Garten
+    "baerschuhe": "lp709114", // Bär Schuhe → BÄR Schuhe
+    "bauknecht": "lp716032", // Bauknecht → Bauknecht
+    "baur": "lp562", // Baur → BAUR
+    "bergemeer": "lp787", // Berge & Meer → Berge & Meer
+    "bergfreunde": "lp608126", // Bergfreunde → Bergfreunde
+    "bergzeit": "lp634827", // Bergzeit → bergzeit
+    "bershka": "lp730308", // Bershka → BERSHKA
+    "bestwestern": "lp309", // Best Western → Best Western Hotels
+    "bett1": "lp717927", // Bett1 → bett1
+    "bettmer": "lp627429", // BETTMER → Bettmer
+    "bettybarclay": "lp533385", // Betty Barclay → Betty Barclay
+    "bild": "lp610935", // Bild+ → BILDplus
+    "billigermietwagende": "lp721514", // billiger-mietwagen.de → Billiger-Mietwagen
+    "bitdefender": "lp534037", // Bitdefender → Bitdefender
+    "blaude": "lp718623", // Blau.de → Blau
+    "bloomwild": "lp702586", // Bloom & Wild → Bloom&Wild
+    "bluetomato": "lp516538", // Blue Tomato → Blue Tomato
+    "blume2000": "lp10024023", // Blume2000 → BLUME2000
+    "blutsgeschwister": "lp706633", // Blutsgeschwister → Blutsgeschwister
+    "boc24": "lp499017", // boc24 → Boc24
+    "bodyattack": "lp634221", // Body Attack → Body Attack
+    "bogner": "lp622598", // Bogner → Bogner
+    "bonprix": "lp615005", // Bonprix → bonprix
+    "bose": "lp702823", // Bose → Bose
+    "braun": "lp721241", // Braun → Braun
+    "brax": "lp623116", // BRAX → Brax
+    "bstn": "lp718496", // BSTN → BSTN
+    "buecherde": "lp475", // Bücher.de → bücher.de
+    "buerostuhl24": "lp516478", // Buerostuhl24 → Buerostuhl24
+    "burga": "lp732176", // BURGA → BURGA
+    "bueroshop24": "lp483497", // Büroshop24 → Büroshop24
+    "buttinette": "lp627382", // Buttinette → buttinette
+    "ca": "lp710", // C&A → C&A Online Shop
+    "cairo": "lp731284", // Cairo → Cairo
+    "calida": "lp625577", // Calida → CALIDA
+    "calumet": "lp623704", // Calumet → Calumet Photo Video
+    "calvinklein": "lp700823", // Calvin Klein → Calvin Klein
+    "calzedonia": "lp730309", // Calzedonia → Calzedonia
+    "camperdays": "lp713088", // CamperDays → CamperDays
+    "canon": "lp626343", // Canon → Canon
+    "carreratoyscom": "lp731451", // carrera-toys.com → Carrera-Toys
+    "centerparcs": "lp516560", // Center Parcs → Center Parcs
+    "charlestyrwhitt": "lp492809", // Charles Tyrwhitt → Charles Tyrwhitt
+    "charlottetilbury": "lp731285", // Charlotte Tilbury → Charlotte Tilbury
+    "christ": "lp536404", // Christ → CHRIST
+    "clubofwine": "lp718619", // Club of Wine → Club of Wine
+    "columbia": "lp716126", // Columbia → Columbia
+    "comma": "lp610589", // comma → comma-store
+    "computeruniverse": "lp516470", // Computeruniverse → computeruniverse
+    "condor": "lp534051", // Condor → Condor
+    "congstar": "lp436", // Congstar → congstar
+    "connox": "lp495131", // Connox → connox
+    "conrad": "lp473360", // Conrad → Conrad
+    "consorsbank": "lp750764", // Consorsbank → Consorsbank
+    "coolblue": "lp711647", // Coolblue → Coolblue
+    "cosmosdirekt": "lp712328", // CosmosDirekt → CosmosDirekt
+    "crazyfactory": "lp718708", // Crazy Factory → Crazy Factory
+    "crocs": "lp516391", // Crocs → Crocs
+    "cupshe": "lp717611", // Cupshe → CUPSHE
+    "cyberport": "lp483551", // Cyberport → Cyberport
+    "dadirekt": "lp701852", // DA Direkt → DA Direkt
+    "dallmayr": "lp473355", // Dallmayr → Dallmayr
+    "dazn": "lp634814", // DAZN → DAZN
+    "dehner": "lp408", // Dehner → Dehner Online Shop
+    "delife": "lp539502", // DELIFE → DELIFE
+    "dell": "lp475351", // Dell → Dell Technologies
+    "deubaxxl": "lp706024", // DeubaXXL → Deuba XXL
+    "diemodernehausfrau": "lp617853", // Die moderne Hausfrau → Die moderne Hausfrau
+    "directferries": "lp760187", // Direct Ferries → Direct Ferries
+    "disneystore": "lp538809", // Disney Store → Disney store
+    "disney": "lp704057", // Disney+ → Disney+
+    "disneylandparis": "lp702824", // Disneyland Paris → Disneyland® Paris
+    "dm": "lp54", // dm → dm
+    "doncarne": "lp721049", // Don Carne → Don Carne
+    "douglas": "lp703660", // Douglas → Douglas
+    "drmartens": "lp718597", // Dr. Martens → Dr. Martens
+    "dreame": "lp754732", // Dreame → DREAME
+    "dressforless": "lp483521", // Dress-for-Less → dress-for-less
+    "dyson": "lp628499", // Dyson → Dyson
+    "ewieeinfach": "lp721058", // E WIE EINFACH → E WIE EINFACH
+    "eon": "lp722", // E.ON → E.ON
+    "eazy": "lp768855", // eazy → eazy
+    "ebay": "lp604887", // Ebay → eBay
+    "ebike24com": "lp753210", // ebike-24.com → EBIKE-24
+    "edekareisen": "lp763", // Edeka Reisen → EDEKA Reisen
+    "edreams": "lp750766", // eDreams → eDreams
+    "eisde": "lp634342", // Eis.de → EIS
+    "eismann": "lp704273", // Eismann → eismann
+    "elvelektronik": "lp492790", // ELV Elektronik → ELV - Das Elektronik-Versandhaus
+    "emmamatratze": "lp721961", // Emma Matratze → Emma Matratze
+    "emp": "lp10024030", // EMP → EMP
+    "enbw": "lp720871", // EnBW → EnBW
+    "engelhorn": "lp571214", // Engelhorn → engelhorn
+    "ernstingsfamily": "lp496550", // Ernsting's Family → Ernsting's family
+    "erwinmueller": "lp495685", // Erwin Müller → Erwin Müller
+    "eschuhede": "lp704274", // eschuhe.de → eschuhe
+    "esetcybersecurity": "lp767701", // ESET Cybersecurity → ESET
+    "esmcomputer": "lp754701", // ESM-Computer → ESM-Computer
+    "esn": "lp721435", // ESN → ESN
+    "etsy": "lp623600", // Etsy → Etsy
+    "euroflorist": "lp486150", // Euroflorist → Euroflorist
+    "euromaster": "lp712", // Euromaster → EUROMASTER
+    "euronics": "lp605210", // Euronics → EURONICS
+    "europcar": "lp747703", // Europcar → Europcar
+    "eurowings": "lp717767", // Eurowings → Eurowings
+    "eurowingsholidays": "lp713013", // Eurowings Holidays → Eurowings Holidays
+    "eventim": "lp10024022", // Eventim → eventim
+    "everdrop": "lp713402", // Everdrop → everdrop
+    "expedia": "lp604878", // Expedia → Expedia
+    "expert": "lp792", // Expert → expert
+    "fackelmann": "lp704892", // Fackelmann → Fackelmann
+    "fafit24": "lp731230", // FaFit24 → FaFit24
+    "fahrradxxl": "lp760450", // Fahrrad XXL → FahrradXXL
+    "falke": "lp499009", // Falke → Falke Shop
+    "farfetch": "lp717", // Farfetch → FARFETCH
+    "fcmoto": "lp699170", // FC-Moto → FC-Moto
+    "feelgoodshop": "lp622301", // Feelgood Shop → Feelgood-Shop
+    "ferienwohnungende": "lp753016", // ferienwohnungen.de → ferienwohnungen
+    "fewodirekt": "lp706026", // Fewo-direkt → FeWo-direkt
+    "finn": "lp721962", // FINN → FINN
+    "fleurop": "lp501768", // Fleurop → Fleurop
+    "flexispot": "lp713380", // FlexiSpot → FlexiSpot
+    "flixbusflixtrain": "lp625601", // FlixBus & FlixTrain → FlixBus
+    "floraprima": "lp483502", // FloraPrima → Flora Prima
+    "fluegede": "lp721343", // Fluege.de → Fluege-de
+    "footlocker": "lp713888", // Foot Locker → Foot Locker
+    "fressnapf": "lp430", // Fressnapf → Fressnapf
+    "gstarraw": "lp604348", // G-Star RAW → G-STAR
+    "galaxus": "lp702825", // Galaxus → Galaxus
+    "galeria": "lp773", // Galeria → GALERIA
+    "gardena": "lp755073", // Gardena → GARDENA
+    "gartenfreizeit": "lp712989", // Garten & Freizeit → Garten & Freizeit
+    "gesundde": "lp753", // gesund.de → gesund.de
+    "getyourguide": "lp703657", // GetYourGuide → GetYourGuide
+    "glow25": "lp766681", // Glow25 → glow25
+    "goodwheel": "lp706748", // Goodwheel → Goodwheel
+    "googlestore": "lp763248", // Google Store → Google Store
+    "groupon": "lp624735", // Groupon → Groupon
+    "grover": "lp708597", // Grover → Grover
+    "gymondo": "lp627650", // Gymondo → GYMONDO
+    "gymshark": "lp631023", // Gymshark → Gymshark
+    "hm": "lp633944", // H&M → H&M
+    "haba": "lp721437", // Haba → HABA
+    "hagebau": "lp473362", // Hagebau → hagebau
+    "halara": "lp754361", // Halara → Halara
+    "hawesko": "lp573914", // Hawesko → Hawesko
+    "heine": "lp781", // Heine → heine
+    "hellofresh": "lp559835", // HelloFresh → HelloFresh
+    "hemdende": "lp611040", // Hemden.de → Hemden.de
+    "herrenausstatter": "lp446", // Herrenausstatter → Herrenausstatter
+    "hessnatur": "lp535326", // Hess Natur → hessnatur
+    "hirmer": "lp539418", // Hirmer → HIRMER
+    "hoffmanngermany": "lp755031", // Hoffmann Germany → Hoffmann Germany
+    "holidaycheck": "lp706323", // HolidayCheck → HolidayCheck
+    "holidu": "lp718711", // Holidu → Holidu
+    "holy": "lp765355", // Holy → HOLY
+    "hoodde": "lp721945", // Hood.de → Hood
+    "hotelde": "lp721328", // Hotel.de → HOTEL DE
+    "hotelscom": "lp706025", // Hotels.com → Hotels.com
+    "hp": "lp10024025", // HP → HP
+    "hrs": "lp708932", // HRS → HRS
+    "hse": "lp473367", // HSE → HSE
+    "huawei": "lp705555", // Huawei → Huawei
+    "hugendubel": "lp721312", // Hugendubel → Hugendubel
+    "hunkemoeller": "lp540024", // Hunkemöller → Hunkemöller
+    "iherb": "lp754362", // iHerb → iHerb
+    "ihghotelsresorts": "lp788", // IHG Hotels & Resorts → IHG Hotels & Resorts
+    "impericon": "lp702423", // Impericon → Impericon
+    "intersport": "lp627737", // Intersport → INTERSPORT
+    "intimissimi": "lp730311", // Intimissimi → Intimissimi
+    "jackjones": "lp627786", // Jack & Jones → JACK & JONES
+    "jackwolfskin": "lp714144", // Jack Wolfskin → Jack Wolfskin
+    "jackery": "lp718481", // Jackery → Jackery
+    "jako": "lp704341", // Jako → Jako
+    "janvanderstorm": "lp625488", // JAN VANDERSTORM → Jan Vanderstorm
+    "jdsports": "lp666124", // JD Sports → JD Sports
+    "jeansfritz": "lp618356", // Jeans Fritz → Jeans Fritz
+    "jochenschweizer": "lp560", // Jochen Schweizer → Jochen Schweizer
+    "joom": "lp721060", // Joom → JOOM
+    "jotex": "lp762599", // Jotex → Jotex
+    "journaway": "lp733055", // journaway → journaway
+    "joyn": "lp516438", // Joyn → Joyn
+    "juskys": "lp732931", // Juskys → JUSKYS
+    "kaptenson": "lp626487", // Kapten & Son → Kapten & Son
+    "kaercher": "lp738532", // Kärcher → Kärcher
+    "karllagerfeld": "lp754857", // Karl Lagerfeld → KARL LAGERFELD
+    "kfzteile24": "lp701800", // kfzteile24 → kfzteile24
+    "kiehls": "lp718127", // Kiehl's → Kiehl's
+    "kinguin": "lp718128", // Kinguin → KINGUIN
+    "kitchenaid": "lp713012", // KitchenAid → KitchenAid
+    "klarmobil": "lp720888", // klarmobil → klarmobil
+    "kleineskraftwerk": "lp721392", // Kleines Kraftwerk → Kleines Kraftwerk
+    "koffercom": "lp540145", // koffer.com → koffer.com
+    "loccitane": "lp572521", // L'Occitane → L'OCCITANE
+    "laminatdepot": "lp747453", // LaminatDEPOT → LaminatDEPOT
+    "lampenwelt": "lp492804", // Lampenwelt → Lampenwelt
+    "landsend": "lp483540", // Lands End → Lands' End
+    "lascana": "lp735", // Lascana → LASCANA
+    "lastminutede": "lp706321", // lastminute.de → lastminute.de
+    "lebara": "lp752986", // Lebara → Lebara
+    "lebkuchenschmidt": "lp717997", // Lebkuchen-Schmidt → Lebkuchen Schmidt
+    "lego": "lp605212", // Lego → LEGO
+    "leifheit": "lp713011", // Leifheit → Leifheit
+    "lenovo": "lp555509", // Lenovo → Lenovo
+    "lensbest": "lp718520", // Lensbest → Lensbest
+    "lenstore": "lp711669", // Lenstore → Lenstore
+    "leonardohotels": "lp721678", // Leonardo Hotels → Leonardo Hotels
+    "levis": "lp732972", // Levis → Levi's®
+    "lgelectronics": "lp721452", // LG Electronics → LG Electronics
+    "lichtblick": "lp713069", // LichtBlick → LichtBlick
+    "liebeskindberlin": "lp621389", // Liebeskind Berlin → LIEBESKIND Berlin
+    "livefresh": "lp721438", // LiveFresh → LiveFresh
+    "lloydshoes": "lp633943", // Lloyd Shoes → LLOYD
+    "loberon": "lp610398", // Loberon → LOBERON
+    "lookfantastic": "lp664443", // Lookfantastic → lookfantastic
+    "ltur": "lp713201", // ltur → ltur
+    "luckybike": "lp533870", // Lucky Bike → Lucky Bike
+    "ludwigvonkapff": "lp718620", // Ludwig von Kapff → Ludwig von Kapff
+    "lufthansa": "lp616686", // Lufthansa → Lufthansa AG
+    "lululemon": "lp718618", // Lululemon → lululemon
+    "lusini": "lp754372", // LUSINI → LUSINI
+    "mactrade": "lp610399", // MacTrade → MacTrade
+    "mango": "lp536712", // Mango → MANGO
+    "manomano": "lp705794", // ManoMano → ManoMano
+    "marcopolo": "lp608866", // Marc O Polo → Marc O'Polo
+    "marktkauf": "lp758", // Marktkauf → MARKTKAUF Online-Shop
+    "marktkaufreisen": "lp764", // Marktkauf Reisen → MARKTKAUF-Reisen
+    "marriottbonvoyhotels": "lp720876", // Marriott Bonvoy Hotels → Marriott Bonvoy
+    "matratzenconcord": "lp763862", // Matratzen Concord → Matratzen Concord
+    "mediamarkt": "lp628164", // Media Markt → MediaMarkt Online
+    "mediamarkttarifwelt": "lp718021", // MediaMarkt Tarifwelt → MediaMarktSaturn Tarifwelt
+    "medimops": "lp539843", // Medimops → Medimops
+    "medion": "lp499603", // Medion → MEDION
+    "megabad": "lp754858", // Megabad → MEGABAD
+    "mepal": "lp752985", // Mepal → Mepal
+    "mey": "lp610408", // mey → mey
+    "michaelkors": "lp721395", // Michael Kors → Michael Kors
+    "miles": "lp767", // MILES → MILES
+    "modivo": "lp718516", // Modivo → Modivo
+    "moemax": "lp666097", // mömax → mömax
+    "momoxfashion": "lp721522", // momox fashion → momox fashion
+    "motointegrator": "lp718714", // Motointegrator → Motointegrator
+    "moeve": "lp721183", // MÖVE → Möve
+    "muji": "lp616273", // MUJI → MUJI
+    "mydays": "lp104", // mydays → mydays Online Shop
+    "mymuesli": "lp718412", // myMuesli → mymuesli
+    "myprotein": "lp615006", // Myprotein → Myprotein
+    "nespresso": "lp713070", // Nespresso → Nespresso
+    "netto": "lp756", // Netto MD → Netto Online-Shop
+    "nettoreisen": "lp757", // Netto Reisen → Netto-Reisen
+    "newbalance": "lp700369", // New Balance → New Balance
+    "next": "lp753783", // NEXT → NEXT
+    "nichebeauty": "lp712815", // Niche Beauty → Niche Beauty
+    "nike": "lp625932", // Nike → Nike
+    "nkd": "lp536361", // NKD → NKD
+    "nordvpn": "lp702703", // NordVPN → NordVPN
+    "notebooksbilliger": "lp499578", // Notebooksbilliger → notebooksbilliger
+    "notino": "lp707645", // Notino → Notino
+    "o2": "lp721723", // O2 → o2
+    "obi": "lp754375", // Obi → OBI
+    "octopusenergy": "lp778", // Octopus Energy → Octopus Energy
+    "odlo": "lp618322", // Odlo → Odlo
+    "officediscount": "lp623117", // Office Discount → office discount
+    "officepartner": "lp627045", // Office Partner → Office-Partner
+    "olight": "lp718522", // Olight → Olight
+    "olymp": "lp483513", // Olymp → OLYMP
+    "only": "lp698962", // Only → ONLY
+    "opodo": "lp750765", // Opodo → Opodo
+    "otto": "lp516490", // Otto → Otto
+    "ottooffice": "lp516451", // Otto Office → OTTO Office
+    "outletcity": "lp571213", // Outletcity → OUTLETCITY
+    "parfumdreams": "lp499568", // Parfumdreams → Parfumdreams
+    "parship": "lp731254", // Parship → Parship
+    "paulmann": "lp625295", // Paulmann → Paulmann Licht
+    "peterhahn": "lp604346", // Peter Hahn → Peter Hahn
+    "petsdeli": "lp731436", // Pets Deli → Pets Deli
+    "pflanzenkoelle": "lp721804", // Pflanzen-Kölle → Pflanzen-Kölle
+    "philipshue": "lp721346", // Philips Hue → Philips hue
+    "poco": "lp718339", // Poco → POCO
+    "pollinelectronic": "lp634222", // Pollin Electronic → Pollin Electronic
+    "printus": "lp623194", // Printus → Printus
+    "prophete": "lp731232", // Prophete → Prophete
+    "proshop": "lp718226", // Proshop → Proshop
+    "puma": "lp502181", // Puma → Puma
+    "purish": "lp762131", // Purish → PURISH
+    "qatarairways": "lp753567", // Qatar Airways → Qatar Airways
+    "quelle": "lp574461", // Quelle → QUELLE
+    "quirion": "lp718230", // Quirion → Quirion
+    "rabotenergy": "lp752969", // Rabot Energy → Rabot Energy
+    "radissonhotels": "lp753246", // Radisson Hotels → Radisson Hotels
+    "radweltshop": "lp709273", // RADWELT Shop → RADWELT-Shop
+    "ralphlauren": "lp618774", // Ralph Lauren → Ralph Lauren
+    "ravensburger": "lp492805", // Ravensburger → Ravensburger
+    "readly": "lp718415", // Readly → Readly
+    "rebuy": "lp534041", // reBuy → rebuy
+    "reicheltelektronik": "lp536749", // Reichelt Elektronik → reichelt elektronik
+    "reisenaktuell": "lp762132", // Reisen Aktuell → ReisenAKTUELL
+    "reservix": "lp750762", // Reservix → reservix
+    "roadsurfer": "lp731425", // Roadsurfer → roadsurfer
+    "roastmarket": "lp706491", // Roastmarket → roastmarket
+    "rtl": "lp706527", // RTL+ → RTL+
+    "soliver": "lp478395", // s.Oliver → s.Oliver
+    "samsung": "lp706812", // Samsung → Samsung
+    "saturn": "lp574478", // Saturn → SATURN Online
+    "saturntarifwelt": "lp718021", // Saturn Tarifwelt → MediaMarktSaturn Tarifwelt
+    "schaefershop": "lp485623", // Schäfer Shop → Schäfer Shop
+    "scheppachshop": "lp754363", // Scheppach Shop → Scheppach
+    "schiesser": "lp539447", // Schiesser → Schiesser
+    "schleich": "lp705049", // schleich → Schleich
+    "schuhede": "lp765380", // schuhe.de → schuhe.de
+    "schulranzenonlineshopde": "lp534173", // schulranzen-onlineshop.de → Schulranzen-Onlineshop
+    "secretescapes": "lp718380", // Secret Escapes → Secret Escapes
+    "seidensticker": "lp518269", // Seidensticker → seidensticker
+    "selected": "lp765841", // Selected → Selected
+    "sephora": "lp704343", // Sephora → Sephora
+    "sharkninja": "lp718413", // SharkNinja → SharkNinja
+    "sheego": "lp492795", // Sheego → Sheego
+    "shein": "lp706477", // SHEIN → SHEIN
+    "shop4runners": "lp703658", // Shop4Runners → Shop4runners
+    "silkesweinkeller": "lp702391", // Silkes Weinkeller → Silkes Weinkeller
+    "simde": "lp754986", // sim.de → sim. de
+    "sixt": "lp365", // Sixt → SIXT Online Shop
+    "skechers": "lp732178", // Skechers → SKECHERS
+    "sky": "lp703", // Sky → Sky
+    "smartsteuer": "lp707262", // Smartsteuer → smartsteuer
+    "sonnenklartv": "lp708598", // sonnenklar.tv → sonnenklar.tv
+    "sonos": "lp701630", // Sonos → SONOS
+    "sony": "lp720887", // Sony → Sony
+    "sportscheck": "lp573949", // Sport Scheck → SportScheck
+    "sportsdirect": "lp765783", // Sports Direct → Sports Direct
+    "spreadshirt": "lp499569", // Spreadshirt → Spreadshirt
+    "stanley1913": "lp762311", // Stanley 1913 → Stanley 1913
+    "stihl": "lp764686", // STIHL → STIHL
+    "stylevana": "lp752218", // Stylevana → Stylevana
+    "superdry": "lp536296", // Superdry → Superdry
+    "surfsharkvpn": "lp712629", // Surfshark VPN → Surfshark
+    "swarovski": "lp538140", // Swarovski → Swarovski
+    "tado": "lp665264", // tado → Tado
+    "takko": "lp625831", // Takko → Takko
+    "tamaris": "lp712630", // Tamaris → Tamaris
+    "tassimo": "lp667085", // Tassimo → Tassimo
+    "tchibo": "lp473364", // Tchibo → Tchibo
+    "tefal": "lp718594", // Tefal → Tefal
+    "telekom": "lp733", // Telekom → Telekom
+    "tempur": "lp717613", // Tempur → TEMPUR
+    "temu": "lp721453", // Temu → Temu
+    "tennispoint": "lp605215", // Tennis-Point → Tennis-Point
+    "teppichde": "lp768840", // teppich.de → teppich.de
+    "terracanis": "lp539897", // Terra Canis → Terra Canis
+    "tezenis": "lp730312", // Tezenis → Tezenis
+    "thalia": "lp423", // Thalia → Thalia
+    "thenorthface": "lp702903", // The North Face → The North Face
+    "ticketmaster": "lp708939", // Ticketmaster → Ticketmaster
+    "timberland": "lp703982", // Timberland → Timberland
+    "tink": "lp703983", // Tink → tink
+    "tirendode": "lp565997", // Tirendo.de → Tirendo
+    "tischwelt": "lp718228", // Tischwelt → Tischwelt
+    "tkmaxx": "lp721290", // TK Maxx → TK Maxx
+    "tomtailor": "lp573960", // Tom Tailor → Tom Tailor
+    "tommyhilfiger": "lp483542", // Tommy Hilfiger → Tommy Hilfiger
+    "tourlane": "lp721289", // Tourlane → Tourlane
+    "treatwell": "lp721068", // Treatwell → treatwell
+    "tripcom": "lp731437", // Trip.com → Trip.com
+    "triumph": "lp536744", // Triumph → Triumph
+    "trotec": "lp747532", // Trotec → Trotec
+    "tui": "lp712423", // TUI → TUI
+    "ugg": "lp620474", // UGG → UGG
+    "ullapopken": "lp574917", // Ulla Popken → Ulla Popken
+    "underarmour": "lp627022", // Under Armour → Under Armour
+    "urbanoutfitters": "lp540143", // Urban Outfitters → Urban Outfitters
+    "urlaubsguru": "lp738480", // Urlaubsguru → urlaubsguru
+    "valmano": "lp618299", // valmano → VALMANO
+    "vangraaf": "lp615008", // VAN GRAAF → VAN GRAAF
+    "vans": "lp700909", // Vans → Vans
+    "veromoda": "lp699120", // Vero Moda → VERO MODA
+    "vertbaudet": "lp706634", // Vertbaudet → Vertbaudet
+    "vidaxl": "lp733057", // vidaXL → VidaXL
+    "viking": "lp483534", // Viking → Viking
+    "vinos": "lp714028", // Vinos → Wein & Vinos
+    "vistaprint": "lp475225", // VistaPrint → Vistaprint
+    "vitaminexpress": "lp708074", // VitaminExpress → Vitaminexpress
+    "vodafone": "lp718019", // Vodafone → Vodafone
+    "voelkner": "lp537568", // Voelkner → voelkner
+    "voghion": "lp731427", // Voghion → Voghion
+    "waiputv": "lp721984", // Waipu.tv → waipu.tv
+    "walbusch": "lp534715", // Walbusch → Walbusch
+    "walzvital": "lp623055", // walzvital → walzvital
+    "wegde": "lp706322", // Weg.de → weg.de
+    "weinfreunde": "lp624791", // Weinfreunde → Weinfreunde
+    "weloveholidays": "lp721348", // weloveholidays → weloveholidays
+    "werkzeugstore24": "lp753782", // Werkzeugstore24 → Werkzeugstore24
+    "westerndigitalwd": "lp709118", // Western Digital (WD) → Western Digital
+    "westwing": "lp717413", // Westwing → Westwing
+    "winsim": "lp754987", // winSIM → winSIM
+    "wittweiden": "lp749", // Witt Weiden → Witt
+    "wolt": "lp717856", // Wolt → Wolt
+    "worldofsweets": "lp518349", // World of Sweets → World of Sweets
+    "wow": "lp496548", // WOW → WOW
+    "xiaomi": "lp721069", // Xiaomi → Xiaomi
+    "xxxlutz": "lp617210", // XXXLutz → XXXLutz
+    "yello": "lp742", // yello → YELLO
+    "yfood": "lp712253", // yfood → yfood
+    "yvesrocher": "lp473356", // Yves Rocher → Yves Rocher
+    "zalandolounge": "lp627511", // Zalando Lounge → Lounge by Zalando
+    "zero": "lp707622", // Zero → zero
+    "zooplus": "lp731139", // Zooplus → zooplus
+    "zurbrueggen": "lp718621", // Zurbrüggen → Zurbrüggen
+    "zwilling": "lp766307", // Zwilling → ZWILLING
+  };
+
   const directLinksMap = buildNormalizedMap(directLinks);
   const bcLinksMap = buildNormalizedMap(bcLinks);
   const luckyDomainsMap = buildNormalizedMap(luckyDomains);
@@ -351,7 +807,12 @@
       "Opera Cashback": (searchName) => `https://duckduckgo.com/?q=!ducky+${enc(searchName)}+site:cashback.opera.com/de/shops`,
       "Penny Kartenwelt": (searchName) => `https://kartenwelt.penny.de/catalogsearch/result/?q=${enc(searchName)}`,
       "REWE Kartenwelt": (searchName) => `https://kartenwelt.rewe.de/catalogsearch/result/?q=${enc(searchName)}`,
-      "Payback": (searchName) => `https://duckduckgo.com/?q=!ducky+${enc(searchName)}+site:payback.de/shop`,
+      "Payback": (searchName) => {
+        const id = PAYBACK_SHOP_IDS[normalize(searchName)];
+        return id
+          ? `https://www.payback.de/shop/${id}`
+          : `https://www.payback.de/suche/shops?q=${enc(searchName)}`;
+      },
     };
 
     const buildUrl = (text, searchName, isVoucherSection, isItem) => {

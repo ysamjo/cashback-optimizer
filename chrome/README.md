@@ -1,4 +1,4 @@
-# Cashback-Optimizer Suite 1.4.7
+# Cashback-Optimizer Suite 1.4.8
 
 Chrome öffnen: `chrome://extensions` → Entwicklermodus → **Entpackte Erweiterung laden** → diesen Ordner auswählen.
 
@@ -13,6 +13,8 @@ Unter **Shop-Liste** in den Einstellungen stehen die Anzahl der geladenen Shops 
 Unter **Anzeige** kann alternativ das bisherige Popup unten rechts auf der Webseite aktiviert werden.
 
 Das bisherige Tampermonkey-Script deaktivieren, damit die Funktionen nicht doppelt ausgeführt werden. Nach Einstellungsänderungen offene Shopseiten neu laden.
+
+Version 1.4.8: Die Payback-Zeile verlinkt direkt auf den passenden PAYBACK-Shop (Shop-ID, z. B. 1&1 `lp731048`); ohne Zuordnung greift die PAYBACK-Suche. Die eBay-Erkennung schließt nur noch Anmelde-, Warenkorb- und Checkout-Subdomains aus.
 
 Version 1.4.7: Dynamische Link-Ergänzungen verarbeiten nur geänderte Überschriften, gebündelt in maximal 50 Elementen pro Browser-Frame.
 
