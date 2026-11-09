@@ -36,6 +36,11 @@ const CASES = [
   { url: "https://www.otto.de/", shop: "Otto", note: "HOST_OVERRIDES-Pfad" },
   { url: "https://www.mydealz.de/", shop: null, note: "echter Ausschluss greift weiterhin" },
   { url: "https://www.amazon.de/", shop: null, note: "echter Ausschluss greift weiterhin" },
+  { url: "https://www.ebay.de/", shop: "Ebay", note: "eBay-Basis-URL" },
+  { url: "https://www.ebay.de/itm/123456789", shop: "Ebay", note: "eBay-Artikelseite" },
+  { url: "https://signin.ebay.de/", shop: null, note: "eBay-Anmeldung ausgeschlossen" },
+  { url: "https://cart.ebay.de/", shop: null, note: "eBay-Warenkorb ausgeschlossen" },
+  { url: "https://checkout.ebay.de/", shop: null, note: "eBay-Checkout ausgeschlossen" },
   { url: "https://example.com/", shop: null, note: "kein Shop in der Liste" },
 ];
 
@@ -117,8 +122,55 @@ for (const [index, testCase] of CASES.entries()) {
   if (!passed) console.log(`       Hinweis: ${testCase.note}`);
 }
 
+async function checkPaybackLinks() {
+  const cases = [
+    ["1&1", "https://www.payback.de/shop/lp731048", "Direktlink"],
+    ["Ebay", "https://www.payback.de/shop/lp604887", "Direktlink"],
+    ["C&A", "https://www.payback.de/shop/lp710", "Direktlink"],
+    ["Boohoo", "https://duckduckgo.com/?q=!ducky+Boohoo+site:payback.de/shop", "DuckDuckGo-Fallback"],
+  ];
+
+  await shopPage.goto("https://cashback-optimizer.de/");
+  await shopPage.waitForLoadState();
+  await shopPage.waitForSelector(".shop-area", { timeout: 30000 }).catch(() => {});
+  await shopPage.waitForFunction(
+    () => [...document.querySelectorAll(".item-name")]
+      .some((el) => el.textContent.trim() === "Payback" && el.querySelector("a.optimizer-link")),
+    null,
+    { timeout: 30000 },
+  ).catch(() => {});
+
+  const links = await shopPage.evaluate(() => {
+    const out = {};
+    for (const area of document.querySelectorAll(".shop-area")) {
+      const name = (area.querySelector(".shop-area-header")?.textContent || "").replace(/\s+/g, " ").trim();
+      const anchor = [...area.querySelectorAll(".item-name")]
+        .find((el) => el.textContent.trim() === "Payback")
+        ?.querySelector("a.optimizer-link");
+      if (name && anchor) out[name] = anchor.href;
+    }
+    return out;
+  });
+
+  let failed = 0;
+  console.log("");
+  for (const [shop, expected, note] of cases) {
+    const actual = links[shop];
+    const passed = actual === expected;
+    if (!passed) failed += 1;
+    console.log(`${passed ? "OK  " : "FEHL"} | Payback-Link ${shop} (${note})`);
+    console.log(`       erwartet: ${expected}`);
+    if (!passed) console.log(`       tatsaechlich: ${actual || "(kein Link gefunden)"}`);
+  }
+  return { failed, total: cases.length };
+}
+
+const payback = await checkPaybackLinks();
+failures += payback.failed;
+
 console.log("");
-console.log(failures === 0 ? `Alle ${CASES.length} Faelle bestanden.` : `${failures} von ${CASES.length} Faellen fehlgeschlagen.`);
+const total = CASES.length + payback.total;
+console.log(failures === 0 ? `Alle ${total} Faelle bestanden.` : `${failures} von ${total} Faellen fehlgeschlagen.`);
 
 await task.finish({ keep: [] }).catch(() => {});
 process.exit(failures === 0 ? 0 : 1);

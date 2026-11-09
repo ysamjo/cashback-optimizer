@@ -1,4 +1,4 @@
-# Cashback-Optimizer Suite 1.4.8
+# Cashback-Optimizer Suite 1.4.9
 
 Chrome öffnen: `chrome://extensions` → Entwicklermodus → **Entpackte Erweiterung laden** → diesen Ordner auswählen.
 
@@ -14,7 +14,9 @@ Unter **Anzeige** kann alternativ das bisherige Popup unten rechts auf der Webse
 
 Das bisherige Tampermonkey-Script deaktivieren, damit die Funktionen nicht doppelt ausgeführt werden. Nach Einstellungsänderungen offene Shopseiten neu laden.
 
-Version 1.4.8: Die Payback-Zeile verlinkt direkt auf den passenden PAYBACK-Shop (Shop-ID, z. B. 1&1 `lp731048`); ohne Zuordnung greift die PAYBACK-Suche. Die eBay-Erkennung schließt nur noch Anmelde-, Warenkorb- und Checkout-Subdomains aus.
+Version 1.4.9: Die Payback-Zeile verlinkt direkt auf den passenden PAYBACK-Shop (Shop-ID, z. B. 1&1 `lp731048`). Ohne eindeutige Zuordnung (Boohoo, Check24, Edeka) greift eine DuckDuckGo-Suche auf `site:payback.de/shop`, damit keine falsche Marke (z. B. boohooMAN) verlinkt wird. Die eBay-Erkennung schließt nur noch Anmelde-, Warenkorb- und Checkout-Subdomains aus.
+
+Die PAYBACK-Zuordnung wird mit `node tools/payback-shop-ids.mjs` neu erzeugt. `--check` vergleicht die Map in Erweiterung, Userscript und Android-Asset; `--verify` prüft alle eingebetteten `lp…`-IDs gegen payback.de.
 
 Version 1.4.7: Dynamische Link-Ergänzungen verarbeiten nur geänderte Überschriften, gebündelt in maximal 50 Elementen pro Browser-Frame.
 

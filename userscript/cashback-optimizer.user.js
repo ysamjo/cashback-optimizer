@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Cashback-Optimizer Suite (v4.57 - TLD Recognition & DDG Ducky)
+// @name         Cashback-Optimizer Suite (v4.58 - TLD Recognition & DDG Ducky)
 // @namespace    http://tampermonkey.net/
-// @version      4.57
+// @version      4.58
 // @description  TLD Recognition, DuckDuckGo Ducky Links, Dark Mode Support, iOS Stable, Full Link Support
 // @author       ruler
 // @match        *://*/*
@@ -610,7 +610,7 @@
                         const id = PAYBACK_SHOP_IDS[normalizePaybackName(searchName)];
                         url = id
                             ? `https://www.payback.de/shop/${id}`
-                            : `https://www.payback.de/suche/shops?q=${encodeURIComponent(searchName)}`;
+                            : `https://duckduckgo.com/?q=!ducky+${encodeURIComponent(searchName)}+site:payback.de/shop`;
                     }
                     else if (text === "iGraal") url = `https://de.igraal.com/search/results?term=${encodeURIComponent(searchName)}`;
                     else if (text === "Opera Cashback") url = `https://duckduckgo.com/?q=!ducky+${encodeURIComponent(searchName)}+site:cashback.opera.com/de/shops`;

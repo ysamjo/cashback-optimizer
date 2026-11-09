@@ -811,7 +811,7 @@
         const id = PAYBACK_SHOP_IDS[normalize(searchName)];
         return id
           ? `https://www.payback.de/shop/${id}`
-          : `https://www.payback.de/suche/shops?q=${enc(searchName)}`;
+          : `https://duckduckgo.com/?q=!ducky+${enc(searchName)}+site:payback.de/shop`;
       },
     };
 
