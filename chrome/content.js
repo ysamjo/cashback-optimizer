@@ -8,8 +8,9 @@
     'bing.', 'duckduckgo.', 'kleinanzeigen.de',
     'copilot.microsoft.com/', 'mydealz.de', 'pepper.pl',
     'preisvergleich.', 'idealo.', 'brickmerge.de', 'amazon.',
-    'netflix.com/watch', 'netflix.com/browse', 'ebay.', 'kartenwelt.rewe.de',
-    'kartenwelt.penny.de'
+    'netflix.com/watch', 'netflix.com/browse', 'kartenwelt.rewe.de',
+    'kartenwelt.penny.de',
+    'signin.ebay.', 'my.ebay.', 'cart.ebay.', 'accounts.ebay.', 'checkout.ebay.', 'secure.ebay.'
   ];
   const DEFAULT_SETTINGS = {
     enabled: true,
