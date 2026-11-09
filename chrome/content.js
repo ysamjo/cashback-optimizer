@@ -695,6 +695,74 @@
     "zwilling": "lp766307", // Zwilling → ZWILLING
   };
 
+  const SHOP_MCC = {
+    "adidas": { mcc: "5655", channel: "Online", category: "Sportbekleidungsgeschäfte" },
+    "agoda": { mcc: "4722", channel: "Online", category: "" },
+    "aldi": { mcc: "5411", channel: "Offline", category: "Supermärkte / Discounter" },
+    "aliexpress": { mcc: "5999", channel: "Online", category: "Online-Marktplatz" },
+    "alternate": { mcc: "5045", channel: "Online", category: "Computer und Elektronik" },
+    "alza": { mcc: "5311", channel: "Online", category: "Kaufhäuser / Elektronikversand" },
+    "amazon": { mcc: "5399", channel: "Online", category: "Versandhandel / Gemischtwaren" },
+    "apple": { mcc: "5818", channel: "Online", category: "Digitale Medien & Software" },
+    "aral": { mcc: "5541", channel: "Offline", category: "Tankstelle" },
+    "babywalz": { mcc: "5641", channel: "Online", category: "Bekleidung für Kinder und Babys" },
+    "bahn": { mcc: "4111", channel: "Online", category: "Nahverkehr / Bahn" },
+    "bauhaus": { mcc: "5211", channel: "Online", category: "Baumarkt & Heimwerkerbedarf" },
+    "dm": { mcc: "5912", channel: "Offline", category: "Drogeriemärkte" },
+    "docmorris": { mcc: "5912", channel: "Online", category: "Apotheke" },
+    "ebay": { mcc: "5311", channel: "Online", category: "Kaufhäuser / Marktplatz" },
+    "edeka": { mcc: "5411", channel: "Offline", category: "Supermärkte / Lebensmittelgeschäfte" },
+    "edreams": { mcc: "4722", channel: "Online", category: "Reiseportal / Reisebüro" },
+    "eneba": { mcc: "5816", channel: "Online", category: "Games / Digitale Güter" },
+    "esso": { mcc: "5541", channel: "Offline", category: "Tankstelle" },
+    "expert": { mcc: "5946", channel: "Online", category: "Foto- und Kameraausrüstung" },
+    "fleurop": { mcc: "5992", channel: "Online", category: "Blumenläden" },
+    "galaxus": { mcc: "5732", channel: "Online", category: "Elektronik / Online-Warenhaus" },
+    "galeria": { mcc: "5311", channel: "Offline", category: "Kaufhäuser" },
+    "groupon": { mcc: "7278", channel: "Online", category: "Einkaufsclubs & Gutscheine" },
+    "hansimglueck": { mcc: "5812", channel: "Offline", category: "Restaurants" },
+    "hellweg": { mcc: "5211", channel: "Offline", category: "Baumarkt" },
+    "ikea": { mcc: "5712", channel: "Offline", category: "Möbel- und Einrichtungshäuser" },
+    "jollyroom": { mcc: "5641", channel: "Online", category: "Kinder- und Babybedarf" },
+    "joybuy": { mcc: "5311", channel: "Online", category: "Elektronik / Gemischtwaren" },
+    "jysk": { mcc: "5712", channel: "Offline", category: "Möbel- und Einrichtungshäuser" },
+    "kaufland": { mcc: "5411", channel: "Offline", category: "Supermärkte / Lebensmittelgeschäfte" },
+    "kinguin": { mcc: "5816", channel: "Online", category: "Games / Digitale Güter" },
+    "koro": { mcc: "5499", channel: "Online", category: "Spezialitätenlebensmittelhändler" },
+    "lego": { mcc: "5945", channel: "Online", category: "Spielwaren & Einzelhandel" },
+    "lidl": { mcc: "5411", channel: "Offline", category: "Supermärkte / Discounter" },
+    "lieferando": { mcc: "5814", channel: "Online", category: "Schnellrestaurant / Lieferdienst" },
+    "marktkauf": { mcc: "5411", channel: "Offline", category: "Lebensmittel / Supermarkt" },
+    "mediamarkt": { mcc: "5732", channel: "Online", category: "Elektronikfachgeschäfte" },
+    "mueller": { mcc: "5912", channel: "Offline", category: "Drogeriemärkte" },
+    "netflix": { mcc: "4899", channel: "Online", category: "Digitale Medien / Streaming" },
+    "nettomd": { mcc: "5399", channel: "Online", category: "Gemischtwarenversandhandel" },
+    "obi": { mcc: "5251", channel: "Offline", category: "Baumarkt" },
+    "opodo": { mcc: "4722", channel: "Online", category: "Reiseportal / Reisebüro" },
+    "penny": { mcc: "5411", channel: "Offline", category: "Supermärkte / Discounter" },
+    "reservix": { mcc: "7922", channel: "Online", category: "Ticket- und Konzertvermittlung" },
+    "rewe": { mcc: "5411", channel: "Offline", category: "Supermärkte / Lebensmittelgeschäfte" },
+    "rofu": { mcc: "5945", channel: "Online", category: "Spielwarengeschäfte" },
+    "rossmann": { mcc: "5912", channel: "Offline", category: "Drogeriemärkte" },
+    "ryd": { mcc: "5541", channel: "Online", category: "Tankstelle" },
+    "saturn": { mcc: "5732", channel: "Online", category: "Elektronikfachgeschäfte" },
+    "sharkninja": { mcc: "5311", channel: "Online", category: "Haushaltsgeräte & Kaufhäuser" },
+    "shein": { mcc: "5999", channel: "Online", category: "Sonstiger Einzelhandel" },
+    "shell": { mcc: "5541", channel: "Offline", category: "Tankstelle" },
+    "smythstoys": { mcc: "5399", channel: "Online / Offline", category: "Spielwaren & Gemischtwaren" },
+    "tchibo": { mcc: "5999", channel: "Offline", category: "Sonstiger Einzelhandel" },
+    "temu": { mcc: "5311", channel: "Online", category: "Kaufhäuser / Online-Marktplatz" },
+    "thalia": { mcc: "5999", channel: "Online", category: "Buchhandlungen / Einzelhandel" },
+    "thomasphilipps": { mcc: "5311", channel: "Offline", category: "Kaufhäuser / Restpostenmärkte" },
+    "toom": { mcc: "5200", channel: "Offline", category: "Baumarkt" },
+    "totalenergies": { mcc: "5541", channel: "Offline", category: "Tankstelle" },
+    "toysino": { mcc: "5945", channel: "Online", category: "Spielwarengeschäfte / Spielwaren" },
+    "tripcom": { mcc: "4722", channel: "Online", category: "Reiseportal / Reisebüro" },
+    "voelkner": { mcc: "5732", channel: "Online", category: "Elektronikfachgeschäfte" },
+    "wow": { mcc: "4899", channel: "Online", category: "Pay-TV & Streaming-Dienste" },
+    "zalando": { mcc: "5621", channel: "Online", category: "Damen- und Herrenbekleidungsgeschäfte" },
+  };
+
   const directLinksMap = buildNormalizedMap(directLinks);
   const bcLinksMap = buildNormalizedMap(bcLinks);
   const luckyDomainsMap = buildNormalizedMap(luckyDomains);
@@ -860,8 +928,29 @@
 
     const HEADER_SELECTOR = '.shop-area-header.filter-tag, .voucher-area-header.filter-tag, .item-name';
     const LINK_SELECTOR = 'a.optimizer-link';
+    const shopNameOf = (el) => {
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('.cb-mcc').forEach((node) => node.remove());
+      return (clone.textContent || '').replace(/<.*%/, '').trim();
+    };
+
+    const addMccHint = (el, shopName) => {
+      if (el.querySelector('.cb-mcc')) return;
+      const info = SHOP_MCC[normalize(shopName)];
+      if (!info) return;
+      const span = document.createElement('span');
+      span.className = 'cb-mcc';
+      span.textContent = `MCC ${info.mcc}`;
+      span.title = [info.mcc, info.channel, info.category].filter(Boolean).join(' · ');
+      span.style.cssText = 'margin-left:6px;font-size:11px;font-weight:400;color:#8a8a8a;white-space:nowrap;';
+      el.appendChild(span);
+    };
+
     const enrich = (headers) => {
       headers.forEach(el => {
+        if (el.classList.contains('shop-area-header')) {
+          addMccHint(el, shopNameOf(el));
+        }
         if (el.querySelector('a.optimizer-link')) return;
 
         const bubble = el.querySelector('.discountBanner');
@@ -873,7 +962,8 @@
         const isItem = el.classList.contains('item-name');
         const text = el.textContent.trim();
         const shopArea = el.closest('.shop-area, .voucher-area');
-        const rawName = shopArea?.querySelector('.filter-tag')?.textContent.replace(/<.*%/, '').trim() || "";
+        const headerEl = shopArea?.querySelector('.filter-tag');
+        const rawName = headerEl ? shopNameOf(headerEl) : "";
         const searchName = (rawName === "Netto MD") ? "Netto" : rawName;
 
         const isVoucherSection = getIsVoucherSection(el);

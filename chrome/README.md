@@ -1,4 +1,4 @@
-# Cashback-Optimizer Suite 1.4.9
+# Cashback-Optimizer Suite 1.5.0
 
 Chrome öffnen: `chrome://extensions` → Entwicklermodus → **Entpackte Erweiterung laden** → diesen Ordner auswählen.
 
@@ -13,6 +13,8 @@ Unter **Shop-Liste** in den Einstellungen stehen die Anzahl der geladenen Shops 
 Unter **Anzeige** kann alternativ das bisherige Popup unten rechts auf der Webseite aktiviert werden.
 
 Das bisherige Tampermonkey-Script deaktivieren, damit die Funktionen nicht doppelt ausgeführt werden. Nach Einstellungsänderungen offene Shopseiten neu laden.
+
+Version 1.5.0: Auf cashback-optimizer.de zeigt der Shop-Header den MCC-Code als kleinen Hinweis (z. B. eBay `MCC 5311`), sofern in `data/mcc-merchants.tsv` vorhanden. Bei Mehrfacheinträgen gewinnt der Online-Eintrag; exakte Namen haben Vorrang vor Aliasen. Pflege: `node tools/mcc-map.mjs` erzeugt die Map, `--report` zeigt Treffer/Lücken, `--check` vergleicht die drei Clients.
 
 Version 1.4.9: Die Payback-Zeile verlinkt direkt auf den passenden PAYBACK-Shop (Shop-ID, z. B. 1&1 `lp731048`). Ohne eindeutige Zuordnung (Boohoo, Check24, Edeka) greift eine DuckDuckGo-Suche auf `site:payback.de/shop`, damit keine falsche Marke (z. B. boohooMAN) verlinkt wird. Die eBay-Erkennung schließt nur noch Anmelde-, Warenkorb- und Checkout-Subdomains aus.
 

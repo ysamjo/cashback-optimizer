@@ -7,8 +7,8 @@ android {
         applicationId = "de.stegmann.cashbackoptimizer"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.1.4"
+        versionCode = 8
+        versionName = "1.2.0"
     }
     buildTypes {
         release {
