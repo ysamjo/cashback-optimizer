@@ -143,7 +143,11 @@ async function checkPaybackLinks() {
   const links = await shopPage.evaluate(() => {
     const out = {};
     for (const area of document.querySelectorAll(".shop-area")) {
-      const name = (area.querySelector(".shop-area-header")?.textContent || "").replace(/\s+/g, " ").trim();
+      const header = area.querySelector(".shop-area-header");
+      if (!header) continue;
+      const clone = header.cloneNode(true);
+      clone.querySelectorAll(".cb-mcc").forEach((node) => node.remove());
+      const name = (clone.textContent || "").replace(/\s+/g, " ").trim();
       const anchor = [...area.querySelectorAll(".item-name")]
         .find((el) => el.textContent.trim() === "Payback")
         ?.querySelector("a.optimizer-link");
@@ -165,11 +169,47 @@ async function checkPaybackLinks() {
   return { failed, total: cases.length };
 }
 
+async function checkMccHints() {
+  const cases = [
+    ["Ebay", "MCC 5311"],
+    ["Adidas", "MCC 5655"],
+    ["Edeka", "MCC 5411"],
+    ["Media Markt", "MCC 5732"],
+    ["Bahn", "MCC 4111"],
+    ["Boohoo", null],
+  ];
+
+  const hints = await shopPage.evaluate(() => {
+    const out = {};
+    for (const area of document.querySelectorAll(".shop-area")) {
+      const header = area.querySelector(".shop-area-header");
+      if (!header) continue;
+      const clone = header.cloneNode(true);
+      clone.querySelectorAll(".cb-mcc").forEach((node) => node.remove());
+      const name = (clone.textContent || "").replace(/\s+/g, " ").trim();
+      out[name] = header.querySelector(".cb-mcc")?.textContent.trim() || null;
+    }
+    return out;
+  });
+
+  let failed = 0;
+  console.log("");
+  for (const [shop, expected] of cases) {
+    const actual = hints[shop] ?? null;
+    const passed = actual === expected;
+    if (!passed) failed += 1;
+    console.log(`${passed ? "OK  " : "FEHL"} | MCC-Hinweis ${shop}`);
+    console.log(`       erwartet: ${expected || "kein Hinweis"} | tatsaechlich: ${actual || "kein Hinweis"}`);
+  }
+  return { failed, total: cases.length };
+}
+
 const payback = await checkPaybackLinks();
-failures += payback.failed;
+const mcc = await checkMccHints();
+failures += payback.failed + mcc.failed;
 
 console.log("");
-const total = CASES.length + payback.total;
+const total = CASES.length + payback.total + mcc.total;
 console.log(failures === 0 ? `Alle ${total} Faelle bestanden.` : `${failures} von ${total} Faellen fehlgeschlagen.`);
 
 await task.finish({ keep: [] }).catch(() => {});
