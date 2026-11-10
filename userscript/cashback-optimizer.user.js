@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Cashback-Optimizer Suite (v4.61 - TLD Recognition & DDG Ducky)
+// @name         Cashback-Optimizer Suite (v4.62 - TLD Recognition & DDG Ducky)
 // @namespace    http://tampermonkey.net/
-// @version      4.61
+// @version      4.62
 // @description  TLD Recognition, DuckDuckGo Ducky Links, Dark Mode Support, iOS Stable, Full Link Support
 // @author       ruler
 // @match        *://*/*
@@ -14,6 +14,8 @@
 
 (function() {
     'use strict';
+    if (window.__cbOptimizerInjected) return;
+    window.__cbOptimizerInjected = true;
 
     // -------------------------
     // STORAGE HELPER (Safari Fix)
@@ -667,6 +669,31 @@
             return (clone.textContent || '').replace(/<.*%/, '').trim();
         }
 
+        const headerNameCache = new WeakMap();
+        const shopAreaNameCache = new WeakMap();
+        function nameOfHeader(el) {
+            if (!headerNameCache.has(el)) headerNameCache.set(el, shopNameOf(el));
+            return headerNameCache.get(el);
+        }
+        function nameOfArea(shopArea) {
+            if (!shopArea) return '';
+            if (!shopAreaNameCache.has(shopArea)) {
+                const headerEl = shopArea.querySelector('.shop-area-header.filter-tag, .voucher-area-header.filter-tag');
+                shopAreaNameCache.set(shopArea, headerEl ? nameOfHeader(headerEl) : '');
+            }
+            return shopAreaNameCache.get(shopArea);
+        }
+
+        function wrapInLink(el, url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.style.cssText = linkStyle;
+            while (el.firstChild) a.appendChild(el.firstChild);
+            el.appendChild(a);
+            return a;
+        }
+
         function effectiveBackground(el) {
             let node = el;
             while (node) {
@@ -698,13 +725,12 @@
         function enrich(headers) {
             headers.forEach(el => {
                 if (el.classList.contains('shop-area-header')) {
-                    addMccHint(el, shopNameOf(el));
+                    addMccHint(el, nameOfHeader(el));
                 }
                 if (el.querySelector('a')) return;
-                const text = el.textContent.trim();
                 const shopArea = el.closest('.shop-area, .voucher-area');
-                const headerEl = shopArea?.querySelector('.shop-area-header.filter-tag, .voucher-area-header.filter-tag');
-                const rawShopName = headerEl ? shopNameOf(headerEl) : "";
+                const text = el.textContent.trim();
+                const rawShopName = nameOfArea(shopArea);
                 const searchName = (rawShopName === "Netto MD") ? "Netto" : rawShopName;
                 const cleanPart = searchName.toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -741,7 +767,7 @@
                     }
                 }
 
-                if (url) el.innerHTML = `<a href="${url}" target="_blank" style="${linkStyle}">${text}</a>`;
+                if (url) wrapInLink(el, url);
             });
         }
 
@@ -758,13 +784,18 @@
         };
         const flushHeaders = () => {
           framePending = false;
-          const batch = [];
-          for (const el of pendingHeaders) {
-            pendingHeaders.delete(el);
-            if (el.isConnected) batch.push(el);
-            if (batch.length === 50) break;
+          const deadline = performance.now() + 8;
+          while (pendingHeaders.size) {
+            const batch = [];
+            for (const el of pendingHeaders) {
+              pendingHeaders.delete(el);
+              if (el.isConnected) batch.push(el);
+              if (batch.length === 100) break;
+            }
+            if (!batch.length) break;
+            enrich(batch);
+            if (performance.now() >= deadline) break;
           }
-          enrich(batch);
           scheduleHeaders();
         };
         const scheduleHeaders = () => {

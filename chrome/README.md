@@ -1,4 +1,4 @@
-# Cashback-Optimizer Suite 1.5.2
+# Cashback-Optimizer Suite 1.5.3
 
 Chrome öffnen: `chrome://extensions` → Entwicklermodus → **Entpackte Erweiterung laden** → diesen Ordner auswählen.
 
@@ -13,6 +13,8 @@ Unter **Shop-Liste** in den Einstellungen stehen die Anzahl der geladenen Shops 
 Unter **Anzeige** kann alternativ das bisherige Popup unten rechts auf der Webseite aktiviert werden.
 
 Das bisherige Tampermonkey-Script deaktivieren, damit die Funktionen nicht doppelt ausgeführt werden. Nach Einstellungsänderungen offene Shopseiten neu laden.
+
+Version 1.5.3: Der Link-Enricher startet auf cashback-optimizer.de bereits am Ende des DOM-Aufbaus, speichert Shop-Namen pro Bereich zwischen und fügt Links in Zeitbudget-Batches ein. Die Android-App injiziert das Userscript beim ersten sichtbaren Seitenaufbau.
 
 Version 1.5.2: Der MCC-Hinweis wählt die Textfarbe passend zum Header-Hintergrund (dunkel auf Gold, hell auf dunklen Headern).
 

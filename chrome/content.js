@@ -908,14 +908,23 @@
       return null;
     };
 
+    const wrapInLink = (el, href, onClick) => {
+      const a = document.createElement('a');
+      a.href = href;
+      a.className = 'optimizer-link';
+      a.style.cssText = 'color:inherit !important; text-decoration:none !important; border-bottom:1px dotted gray !important;';
+      if (onClick) {
+        a.style.cursor = 'pointer';
+        a.addEventListener('click', onClick);
+      }
+      while (el.firstChild) a.appendChild(el.firstChild);
+      el.appendChild(a);
+      return a;
+    };
+
     const wireClickableHeader = (el, bubbleEl) => {
       if (el.querySelector('a.optimizer-link')) return;
-      const content = el.innerHTML;
-
-      el.innerHTML = `<a href="#" class="optimizer-link" style="color:inherit !important; text-decoration:none !important; border-bottom:1px dotted gray !important; cursor:pointer;">${content}</a>`;
-      const newLink = el.querySelector('.optimizer-link');
-
-      newLink.addEventListener('click', (e) => {
+      wrapInLink(el, '#', (e) => {
         e.preventDefault();
         e.stopPropagation();
         try { bubbleEl.click(); }
@@ -932,6 +941,20 @@
       const clone = el.cloneNode(true);
       clone.querySelectorAll('.cb-mcc').forEach((node) => node.remove());
       return (clone.textContent || '').replace(/<.*%/, '').trim();
+    };
+    const headerNameCache = new WeakMap();
+    const shopAreaNameCache = new WeakMap();
+    const nameOfHeader = (el) => {
+      if (!headerNameCache.has(el)) headerNameCache.set(el, shopNameOf(el));
+      return headerNameCache.get(el);
+    };
+    const nameOfArea = (shopArea) => {
+      if (!shopArea) return '';
+      if (!shopAreaNameCache.has(shopArea)) {
+        const headerEl = shopArea.querySelector('.filter-tag');
+        shopAreaNameCache.set(shopArea, headerEl ? nameOfHeader(headerEl) : '');
+      }
+      return shopAreaNameCache.get(shopArea);
     };
 
     const effectiveBackground = (el) => {
@@ -965,7 +988,7 @@
     const enrich = (headers) => {
       headers.forEach(el => {
         if (el.classList.contains('shop-area-header')) {
-          addMccHint(el, shopNameOf(el));
+          addMccHint(el, nameOfHeader(el));
         }
         if (el.querySelector('a.optimizer-link')) return;
 
@@ -978,8 +1001,7 @@
         const isItem = el.classList.contains('item-name');
         const text = el.textContent.trim();
         const shopArea = el.closest('.shop-area, .voucher-area');
-        const headerEl = shopArea?.querySelector('.filter-tag');
-        const rawName = headerEl ? shopNameOf(headerEl) : "";
+        const rawName = nameOfArea(shopArea);
         const searchName = (rawName === "Netto MD") ? "Netto" : rawName;
 
         const isVoucherSection = getIsVoucherSection(el);
@@ -987,7 +1009,10 @@
 
         if (url) {
           const isInternal = url.includes(MAIN_DOMAIN);
-          el.innerHTML = `<a href="${url}" target="${isInternal ? '_self' : '_blank'}" rel="noreferrer" class="optimizer-link" referrerpolicy="no-referrer" style="color:inherit !important; text-decoration:none !important; border-bottom:1px dotted gray !important;">${el.innerHTML}</a>`;
+          const a = wrapInLink(el, url);
+          a.target = isInternal ? '_self' : '_blank';
+          a.rel = 'noreferrer';
+          a.referrerPolicy = 'no-referrer';
         }
       });
     };
@@ -1005,13 +1030,18 @@
     };
     const flushHeaders = () => {
       framePending = false;
-      const batch = [];
-      for (const el of pendingHeaders) {
-        pendingHeaders.delete(el);
-        if (el.isConnected) batch.push(el);
-        if (batch.length === 50) break;
+      const deadline = performance.now() + 8;
+      while (pendingHeaders.size) {
+        const batch = [];
+        for (const el of pendingHeaders) {
+          pendingHeaders.delete(el);
+          if (el.isConnected) batch.push(el);
+          if (batch.length === 100) break;
+        }
+        if (!batch.length) break;
+        enrich(batch);
+        if (performance.now() >= deadline) break;
       }
-      enrich(batch);
       scheduleHeaders();
     };
     const scheduleHeaders = () => {

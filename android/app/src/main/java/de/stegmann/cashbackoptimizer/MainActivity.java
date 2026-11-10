@@ -246,6 +246,11 @@ public final class MainActivity extends ComponentActivity {
                 openExternally(request.getUrl());
                 return true;
             }
+            @Override public void onPageCommitVisible(WebView view, String url) {
+                if (isMainSite(Uri.parse(url))) {
+                    injectUserscript();
+                }
+            }
             @Override public void onPageFinished(WebView view, String url) {
                 progressBar.setVisibility(View.GONE);
                 if (isMainSite(Uri.parse(url))) {
