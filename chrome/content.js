@@ -934,6 +934,16 @@
       return (clone.textContent || '').replace(/<.*%/, '').trim();
     };
 
+    const effectiveBackground = (el) => {
+      let node = el;
+      while (node) {
+        const bg = getComputedStyle(node).backgroundColor;
+        if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') return bg;
+        node = node.parentElement;
+      }
+      return 'rgb(255, 255, 255)';
+    };
+
     const addMccHint = (el, shopName) => {
       if (el.querySelector('.cb-mcc')) return;
       const info = SHOP_MCC[normalize(shopName)];
@@ -942,11 +952,13 @@
       el.style.alignItems = 'center';
       el.style.justifyContent = 'space-between';
       el.style.gap = '8px';
+      const [r, g, b] = (effectiveBackground(el).match(/\d+(?:\.\d+)?/g) || [255, 255, 255]).map(Number);
+      const color = (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#3a2d12' : '#f5f0e6';
       const span = document.createElement('span');
       span.className = 'cb-mcc';
       span.textContent = `MCC ${info.mcc}`;
       span.title = [info.mcc, info.channel, info.category].filter(Boolean).join(' · ');
-      span.style.cssText = 'margin-left:auto;margin-right:6px;font-size:9px;font-weight:600;color:#3a2d12;letter-spacing:0.02em;white-space:nowrap;flex-shrink:0;';
+      span.style.cssText = `margin-left:auto;margin-right:6px;font-size:9px;font-weight:600;color:${color};letter-spacing:0.02em;white-space:nowrap;flex-shrink:0;`;
       el.appendChild(span);
     };
 
