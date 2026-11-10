@@ -1,4 +1,4 @@
-# Cashback-Optimizer Suite 1.5.0
+# Cashback-Optimizer Suite 1.5.1
 
 Chrome öffnen: `chrome://extensions` → Entwicklermodus → **Entpackte Erweiterung laden** → diesen Ordner auswählen.
 
@@ -13,6 +13,8 @@ Unter **Shop-Liste** in den Einstellungen stehen die Anzahl der geladenen Shops 
 Unter **Anzeige** kann alternativ das bisherige Popup unten rechts auf der Webseite aktiviert werden.
 
 Das bisherige Tampermonkey-Script deaktivieren, damit die Funktionen nicht doppelt ausgeführt werden. Nach Einstellungsänderungen offene Shopseiten neu laden.
+
+Version 1.5.1: Der MCC-Hinweis sitzt rechtsbündig im Shop-Header, ist mit 9 px kleiner und nutzt ein dunkleres Braun für besseren Kontrast auf dem goldenen Header.
 
 Version 1.5.0: Auf cashback-optimizer.de zeigt der Shop-Header den MCC-Code als kleinen Hinweis (z. B. eBay `MCC 5311`), sofern in `data/mcc-merchants.tsv` vorhanden. Bei Mehrfacheinträgen gewinnt der Online-Eintrag; exakte Namen haben Vorrang vor Aliasen. Pflege: `node tools/mcc-map.mjs` erzeugt die Map, `--report` zeigt Treffer/Lücken, `--check` vergleicht die drei Clients.
 

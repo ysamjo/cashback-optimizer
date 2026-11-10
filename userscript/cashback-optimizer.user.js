@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Cashback-Optimizer Suite (v4.59 - TLD Recognition & DDG Ducky)
+// @name         Cashback-Optimizer Suite (v4.60 - TLD Recognition & DDG Ducky)
 // @namespace    http://tampermonkey.net/
-// @version      4.59
+// @version      4.60
 // @description  TLD Recognition, DuckDuckGo Ducky Links, Dark Mode Support, iOS Stable, Full Link Support
 // @author       ruler
 // @match        *://*/*
@@ -671,11 +671,15 @@
             if (el.querySelector('.cb-mcc')) return;
             const info = SHOP_MCC[normalizePaybackName(shopName)];
             if (!info) return;
+            el.style.display = 'flex';
+            el.style.alignItems = 'center';
+            el.style.justifyContent = 'space-between';
+            el.style.gap = '8px';
             const span = document.createElement('span');
             span.className = 'cb-mcc';
             span.textContent = `MCC ${info.mcc}`;
             span.title = [info.mcc, info.channel, info.category].filter(Boolean).join(' · ');
-            span.style.cssText = 'margin-left:6px;font-size:11px;font-weight:400;color:#8a8a8a;white-space:nowrap;';
+            span.style.cssText = 'margin-left:auto;margin-right:6px;font-size:9px;font-weight:600;color:#3a2d12;letter-spacing:0.02em;white-space:nowrap;flex-shrink:0;';
             el.appendChild(span);
         }
 
